@@ -1,7 +1,7 @@
 /**
- * Mực Đỏ Thực Hành: Tiến độ v2 bắt đầu trống, migration v1 giữ dữ liệu học đã có; media nặng ở IndexedDB.
+ * Mực Đỏ Thực Hành: Tiến độ v2 bắt đầu trống; backup lưu metadata luyện nét còn ảnh nằm ở IndexedDB thiết bị.
  */
-import type { LearningProgress, SkillId } from "@/lib/types";
+import type { LearningProgress, SkillId, WritingPracticeRecord, WritingPracticeSummary } from "@/lib/types";
 
 const PROGRESS_KEY = "hoa-ngu-180-progress-v1";
 const DB_NAME = "hoa-ngu-180-media-v1";
@@ -18,6 +18,7 @@ type LegacyProgress = {
   totalMinutes?: number;
   streakDays?: number;
   lastStudiedAt?: string | null;
+  writingPracticeSummaries?: Record<string, WritingPracticeSummary>;
   settings?: Partial<LearningProgress["settings"]>;
 };
 
@@ -40,6 +41,7 @@ export const defaultProgress = (): LearningProgress => ({
   lastStudiedAt: null,
   audioPlayCounts: {},
   reviewedWordIds: [],
+  writingPracticeSummaries: {},
   settings: { showPinyin: true, showTranslation: true, speechRate: 0.8, volume: 1, compactMode: false },
 });
 
@@ -60,6 +62,7 @@ function migrateProgress(raw: LegacyProgress | LearningProgress): LearningProgre
     skills: { ...base.skills, ...raw.skills },
     audioPlayCounts: "audioPlayCounts" in raw && raw.audioPlayCounts ? raw.audioPlayCounts : {},
     reviewedWordIds: "reviewedWordIds" in raw && raw.reviewedWordIds ? raw.reviewedWordIds : [],
+    writingPracticeSummaries: "writingPracticeSummaries" in raw && raw.writingPracticeSummaries ? raw.writingPracticeSummaries : {},
     settings: { ...base.settings, ...raw.settings },
   };
 }
@@ -106,7 +109,7 @@ function openMediaDb(): Promise<IDBDatabase> {
 }
 
 async function storeLargeData(key: string, value: Blob | string) {
-  if (typeof window === "undefined" || !window.indexedDB) return;
+  if (typeof window === "undefined" || !window.indexedDB) throw new Error("Trình duyệt này không hỗ trợ lưu media cục bộ.");
   const db = await openMediaDb();
   await new Promise<void>((resolve, reject) => {
     const transaction = db.transaction("records", "readwrite");
@@ -118,4 +121,22 @@ async function storeLargeData(key: string, value: Blob | string) {
 }
 
 export async function saveAudioRecord(lessonId: string, blob: Blob) { return storeLargeData(`audio:${lessonId}:${Date.now()}`, blob); }
-export async function saveWritingPractice(lessonId: string, imageData: string, skill: SkillId = "writing") { return storeLargeData(`${skill}:${lessonId}:${Date.now()}`, imageData); }
+export async function saveWritingPractice(input: { lessonId: string; character: string; strokeCount: number; imageData: string }): Promise<WritingPracticeSummary> {
+  if (typeof window === "undefined" || !window.indexedDB) throw new Error("Trình duyệt này không hỗ trợ lưu nét viết lâu dài.");
+  const savedAt = new Date().toISOString();
+  const id = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `writing-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const record: WritingPracticeRecord = { id, lessonId: input.lessonId, character: input.character, strokeCount: input.strokeCount, savedAt, imageData: input.imageData, status: "practice-saved" };
+  const db = await openMediaDb();
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const transaction = db.transaction("records", "readwrite");
+      transaction.objectStore("records").put(record, `writing:${record.id}`);
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error ?? new Error("Không thể hoàn tất lưu nét viết."));
+      transaction.onabort = () => reject(transaction.error ?? new Error("Lưu nét viết đã bị hủy."));
+    });
+    return { id: record.id, lessonId: record.lessonId, character: record.character, strokeCount: record.strokeCount, savedAt: record.savedAt, status: record.status };
+  } finally {
+    db.close();
+  }
+}

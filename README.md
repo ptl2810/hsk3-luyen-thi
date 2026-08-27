@@ -48,7 +48,7 @@ Video tuần 8 có thể mở từ lesson tuần 8 ở cuối dashboard. Các vi
 
 ## Lưu dữ liệu và quyền riêng tư
 
-Tiến độ dùng schema version `2`. Trạng thái người học mới là **trống**: không có điểm, chuỗi ngày, bài hoàn thành hoặc số phút giả. Migration nhận dữ liệu version 1; trạng thái demo mặc định trước đây được chuyển về trống, còn tiến độ thực tế được giữ khi có thể. Bản ghi âm và ảnh nét viết được cố gắng lưu trong IndexedDB; JSON backup bảo toàn tiến độ, câu trả lời, từ khó và cài đặt nhưng chưa gói Blob audio/ảnh canvas để tránh tệp quá lớn.
+Tiến độ dùng schema version `2`. Trạng thái người học mới là **trống**: không có điểm, chuỗi ngày, bài hoàn thành hoặc số phút giả. Migration nhận dữ liệu version 1; trạng thái demo mặc định trước đây được chuyển về trống, còn tiến độ thực tế được giữ khi có thể. Mỗi lượt lưu nét viết tạo một record có ID, lesson, chữ mẫu, số nét, thời điểm và trạng thái `practice-saved` trong IndexedDB. JSON backup giữ metadata tiến độ/lượt lưu, câu trả lời, từ khó và cài đặt; **không gói ảnh canvas hoặc Blob audio**, nên ảnh luyện nét vẫn ở thiết bị đã thực hành.
 
 > Ứng dụng chỉ xin quyền micro sau khi người học bấm bắt đầu ghi âm. Không có dữ liệu học hay bản ghi nào tự động gửi lên máy chủ trong MVP này.
 
@@ -59,7 +59,7 @@ Tiến độ dùng schema version `2`. Trạng thái người học mới là **
 | Nghe | Tệp audio ưu tiên, phát/tạm dừng/phát lại/tua, tốc độ, pinyin/dịch. | 139 bài đang chờ audio tệp; không có fallback giọng đọc mặc định. |
 | Từ vựng | Clip Mandarin riêng cho sáu từ tuần 1 và drill năm thanh, phát qua audio tệp. | Chưa có clip riêng cho từ vựng tuần 2–24; giao diện báo rõ là đang chờ sản xuất. |
 | Nói | Ghi âm cục bộ, nghe lại, nhận diện `zh-CN` khi trình duyệt hỗ trợ, tự nhập transcript. | “Mức khớp nội dung” chỉ so sánh transcript; không chấm thanh điệu, nhịp hay phát âm chuyên sâu. |
-| Viết | Canvas chuột/cảm ứng/bút, mẫu chữ, hoàn tác, xóa, lưu ảnh. | Chỉ là luyện và tự đối chiếu; không nhận diện hoặc chấm chữ viết tay. |
+| Viết | Canvas chuột/cảm ứng/bút với pointer capture an toàn, mẫu chữ, hoàn tác, xóa, lưu record và trạng thái rõ ràng. | Chỉ là luyện và tự đối chiếu; app không nhận diện hoặc chấm đúng/sai chữ viết tay. “Đạt bài viết” chỉ áp dụng cho nhiệm vụ câu có đáp án máy chấm được. |
 | Video | Một video gốc có poster/WebVTT; 24 kịch bản có fallback văn bản và 24 link YouTube video cụ thể. | Clip tuần 8 hiện ngắn hơn mục tiêu 30–60 giây; 23 video nội bộ chưa được sản xuất. Khả năng xem/nhúng video bên ngoài vẫn phụ thuộc YouTube và thiết bị. |
 | Thi thử | Timer và cấu hình 10/40/80 câu theo mốc. | Nội dung là phiếu luyện do project biên soạn; không đại diện cho đề thi chính thức. |
 
@@ -73,16 +73,18 @@ Tiến độ dùng schema version `2`. Trạng thái người học mới là **
 | `client/src/lib/types.ts` | Schema lesson, câu hỏi, media và tiến độ v2. |
 | `client/src/lib/assessment.ts` | Chấm trắc nghiệm, so sánh transcript, tiến độ, lesson tiếp theo và danh sách ôn. |
 | `client/src/lib/storage.ts` | localStorage, migration v1→v2, IndexedDB và backup JSON. |
+| `client/src/lib/writingCanvas.ts` | Helper toạ độ Canvas thuần, không giữ React SyntheticEvent. |
+| `client/src/lib/writingProgress.ts` | Tách metadata lưu luyện nét khỏi kết quả chấm câu viết. |
 | `client/src/components/AudioCoach.tsx` | Trình phát audio tệp với trạng thái lỗi/chờ sản xuất trung thực. |
 | `client/src/components/LessonVideo.tsx` | Video, phụ đề, fallback transcript và trạng thái media. |
 | `client/src/components/SpeakingPractice.tsx` | Ghi âm, nhận diện tùy thiết bị và mức khớp nội dung. |
-| `client/src/components/WritingCanvas.tsx` | Canvas luyện và tự đối chiếu. |
+| `client/src/components/WritingCanvas.tsx` | Canvas luyện nét có Pointer Events an toàn, capture/cancel/lost capture và khối trạng thái lưu rõ ràng. |
 | `client/src/pages/Home.tsx` | Dashboard, lộ trình, các panel kỹ năng, ôn tập, cài đặt. |
-| `client/src/lib/assessment.test.ts` | 13 test cho logic, catalog, manifest audio/video cụ thể, mock test và backup. |
+| `client/src/**/*writing*.test.*` | 8 test Canvas/tiến độ: scale toạ độ, rect rỗng, pointer chuột/chạm/bút, cancel/lost capture, lưu thành công/lỗi và câu viết đúng/sai. |
 
 ## Kiểm thử
 
-Phiên bản này đã chạy `pnpm check`, `pnpm exec vitest run` (**13 test đạt**) và `pnpm build`. Các test kiểm tra đủ 144 lesson/24 tuần, trường nội dung bắt buộc, ID từ vựng duy nhất, đáp án nghe/đọc, asset audio tuần 1 với Hán tự–thời lượng–hash, ánh xạ chính xác thanh/câu đọc, 24 URL video đơn lẻ có video ID, đề mô phỏng 80 câu/85 phút, tiến độ mới trống, sao lưu v2 và chọn lesson tiếp theo.
+Phiên bản này đã chạy `pnpm check`, `pnpm exec vitest run` (**21 test đạt**) và `pnpm build`. Ngoài catalog/media/backup, test kiểm tra toạ độ Canvas khi CSS scale khác backing store, canvas/rect không sẵn sàng, chuỗi Pointer Events chuột/chạm/bút, `pointercancel`, `lostpointercapture`, lưu thành công/lỗi và quy tắc: lưu nét không tự hoàn thành kỹ năng Viết, chỉ câu đúng mới tạo điểm/hoàn thành.
 
 > Các clip Mandarin tuần 1 là **neural TTS đã kiểm tra kỹ thuật về tệp/thời lượng/hash**, chưa phải bản được người bản ngữ thẩm định. App không tuyên bố đã có kiểm duyệt phát âm bởi người bản ngữ.
 

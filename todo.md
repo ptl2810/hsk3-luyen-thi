@@ -62,3 +62,12 @@
 - [x] Thay TTS trình duyệt trong luồng từ vựng/đọc ưu tiên bằng tệp audio thực khi asset đã có; nội dung thiếu asset báo chờ sản xuất, không giả phát giọng mặc định.
 - [x] Tìm và kiểm chứng URL YouTube video cụ thể cho từng lesson, không dùng link kênh hoặc playlist.
 - [ ] Thêm kiểm tra manifest text–asset–URL, test luồng web và báo cáo rõ các media chưa có audio tệp.
+
+## Hotfix phần Viết, lưu luyện nét và tiến độ
+
+- [x] Rà soát `WritingCanvas`, `storage`, `Home` và các test để đối chiếu lỗi Pointer Events cùng luồng hoàn thành phần Viết.
+- [x] Sửa toạ độ canvas để mọi Pointer Event được chuyển thành `Point` đồng bộ trước cập nhật state; bảo toàn capture, cancel và lost capture.
+- [x] Thêm khối trạng thái viết rõ ràng cho chưa vẽ, đã vẽ/chưa lưu, lưu thành công và lỗi lưu; không đánh giá đúng/sai nét chữ viết tay.
+- [x] Lưu record luyện nét có lesson, chữ mẫu, số nét, thời điểm và trạng thái sau transaction IndexedDB; phản ánh chính xác trên tiến độ.
+- [x] Tách lưu luyện nét khỏi chấm câu: chỉ hoàn thành kỹ năng Viết khi nhiệm vụ câu có đáp án được chấm đúng.
+- [x] Thêm test helper Canvas, chuỗi pointer, lưu luyện nét, câu đúng/sai, sau đó kiểm tra hồi quy toàn bộ app trên desktop và mobile.

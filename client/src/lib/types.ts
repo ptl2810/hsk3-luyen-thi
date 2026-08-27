@@ -36,6 +36,19 @@ export interface AudioAsset {
   reviewStatus: AudioReviewStatus;
 }
 
+export interface WritingPracticeSummary {
+  id: string;
+  lessonId: string;
+  character: string;
+  strokeCount: number;
+  savedAt: string;
+  status: "practice-saved";
+}
+
+export interface WritingPracticeRecord extends WritingPracticeSummary {
+  imageData: string;
+}
+
 export interface ChoiceOption {
   id: string;
   label: string;
@@ -184,6 +197,8 @@ export interface LearningProgress {
   lastStudiedAt: string | null;
   audioPlayCounts: Record<string, number>;
   reviewedWordIds: string[];
+  /** Chỉ metadata sao lưu JSON; ảnh nét viết tiếp tục ở IndexedDB của thiết bị hiện tại. */
+  writingPracticeSummaries: Record<string, WritingPracticeSummary>;
   settings: AppSettings;
 }
 
