@@ -30,7 +30,7 @@ Catalog `lessons` trong `client/src/data/courseData.ts` có đủ **144 lesson**
 
 ## Media phương án A
 
-Audio tệp là học liệu ưu tiên. **Ứng dụng không còn dùng `SpeechSynthesis` của trình duyệt làm fallback** cho phần nghe/từ vựng: khi không có tệp, giao diện nói rõ audio đang chờ sản xuất thay vì thông báo đang đọc bằng giọng mặc định. `audioManifest` có 144 mục nghe với transcript Hanzi, pinyin, dịch Việt và trạng thái/ghi chú quyền sử dụng. `audioAssets` trong `client/src/data/mediaManifest.ts` mô tả riêng các clip tuần 1 có ID, Hán tự được nói, pinyin hiển thị, đường dẫn tệp, thời lượng, SHA-256, nguồn sinh giọng và trạng thái kiểm tra kỹ thuật.
+Audio tệp là học liệu ưu tiên. **Ứng dụng không còn dùng `SpeechSynthesis` của trình duyệt làm fallback** cho phần nghe/từ vựng/Đọc: khi không có tệp, giao diện nói rõ audio đang chờ sản xuất thay vì thông báo đang đọc bằng giọng mặc định. `audioManifest` có 144 mục nghe với transcript Hanzi, pinyin, dịch Việt và trạng thái/ghi chú quyền sử dụng. `audioAssets` trong `client/src/data/mediaManifest.ts` mô tả các clip tuần 1 và **18 clip Đọc tuần 2–4** có ID, lesson ID, Hán tự được nói, đường dẫn tệp, thời lượng, SHA-256, nguồn sinh giọng và trạng thái kiểm tra kỹ thuật.
 
 `videoManifest` có 24 mục, mỗi mục gắn một **URL YouTube video công khai đơn lẻ** với video ID, URL nhúng dạng `youtube-nocookie`, tiêu đề, kênh, ghi chú phù hợp và ngày kiểm chứng. Nút video ngoài luôn mở đúng clip được ghi ở tuần đang học, không mở kênh hay playlist. Danh mục đối chiếu nằm tại `docs/video-specific-research.md`.
 
@@ -39,6 +39,7 @@ Audio tệp là học liệu ưu tiên. **Ứng dụng không còn dùng `Speech
 | Lesson có thể mở | 144 | Đầy đủ dữ liệu cho bốn kỹ năng. |
 | Audio nghe tệp thật | 5 | Một bài nghe đại diện ở tuần 1, 8, 12, 18 và 24; asset gốc tạo cho project. |
 | Clip Mandarin tuần 1 | 8 | Năm clip thanh điệu riêng `妈/麻/马/骂/吗`, hai từ vựng `你/好` và câu đọc `我是学生。`. |
+| Audio đoạn Đọc tệp thật | 18 | Toàn bộ 6 buổi của tuần 2, 3 và 4; mỗi tệp khớp nguyên văn đoạn Đọc 3 câu của lesson. |
 | Audio nghe chờ sản xuất | 139 | Có transcript; giao diện báo chờ sản xuất, không phát giọng mặc định. |
 | Video tệp thật | 1 | Tuần 8; clip mở tình huống dài 8 giây, có poster và WebVTT. |
 | Video chờ sản xuất | 23 | Có transcript, phụ đề văn bản, câu hỏi và ghi chú quyền trong manifest. |
@@ -59,7 +60,7 @@ Tiến độ dùng schema version `2`. Trạng thái người học mới là **
 | Nghe | Script 3 câu cho các lesson chờ audio và 2 câu hỏi hiểu nội dung; tệp audio ưu tiên khi có. | 139 bài đang chờ audio tệp; không có fallback giọng đọc mặc định. |
 | Từ vựng | Clip Mandarin riêng cho sáu từ tuần 1 và drill năm thanh, phát qua audio tệp. | Chưa có clip riêng cho từ vựng tuần 2–24; giao diện báo rõ là đang chờ sản xuất. |
 | Nói | Ba biến thể mẫu theo tình huống, ghi âm cục bộ, nghe lại, nhận diện `zh-CN` khi trình duyệt hỗ trợ, tự nhập transcript. | “Mức khớp nội dung” chỉ so sánh transcript; không chấm thanh điệu, nhịp hay phát âm chuyên sâu. |
-| Đọc | Đoạn 3 câu, pinyin/dịch bật tắt, gợi ý từ và 3 câu hỏi chấm cùng lúc; mỗi câu được lưu vào Ôn tập. | Đây là học liệu gốc theo chủ đề, không phải câu hỏi thi chính thức sao chép từ đề. |
+| Đọc | Đoạn 3 câu, pinyin/dịch bật tắt, gợi ý từ và 3 câu hỏi chấm cùng lúc; mỗi câu được lưu vào Ôn tập. | Audio tệp hiện phủ tuần 2–4; các tuần khác vẫn chưa có audio Đọc và không tự fallback bằng giọng thiết bị. |
 | Viết | Canvas chuột/cảm ứng/bút với pointer capture an toàn, mẫu chữ, hoàn tác, xóa, lưu record; sắp xếp câu và điền chữ. | Chỉ là luyện và tự đối chiếu; app không nhận diện/chấm chữ viết tay. “Đạt bài viết” chỉ áp dụng cho nhiệm vụ câu có đáp án máy chấm được. |
 | Video | Một video gốc có poster/WebVTT; 24 kịch bản có fallback văn bản và 24 link YouTube video cụ thể. | Clip tuần 8 hiện ngắn hơn mục tiêu 30–60 giây; 23 video nội bộ chưa được sản xuất. Khả năng xem/nhúng video bên ngoài vẫn phụ thuộc YouTube và thiết bị. |
 | Thi thử | Timer và cấu hình 10/40/80 câu theo mốc. | Nội dung là phiếu luyện do project biên soạn; không đại diện cho đề thi chính thức. |
@@ -85,7 +86,7 @@ Tiến độ dùng schema version `2`. Trạng thái người học mới là **
 
 ## Kiểm thử
 
-Phiên bản này đã chạy `pnpm check`, `pnpm exec vitest run` (**24 test đạt**) và `pnpm build`. Ngoài catalog/media/backup, test kiểm tra 144 đoạn Đọc riêng và nhiều câu, script Nghe nhiều câu khi audio tệp chưa có, bộ ba câu Đọc từ UI đến lưu kết quả, toạ độ Canvas khi CSS scale khác backing store, chuỗi Pointer Events chuột/chạm/bút, `pointercancel`, `lostpointercapture`, lưu thành công/lỗi và quy tắc: lưu nét không tự hoàn thành kỹ năng Viết, chỉ câu đúng mới tạo điểm/hoàn thành.
+Phiên bản này đã chạy `pnpm check`, `pnpm exec vitest run` (**26 test đạt**) và `pnpm build`. Ngoài catalog/media/backup, test kiểm tra 144 đoạn Đọc riêng và nhiều câu, 18 clip Đọc tuần 2–4 có lesson ID/URL/Hán tự khớp nguyên văn, callback nút phát đúng lesson, script Nghe nhiều câu khi audio tệp chưa có, bộ ba câu Đọc từ UI đến lưu kết quả, toạ độ Canvas khi CSS scale khác backing store, chuỗi Pointer Events chuột/chạm/bút, `pointercancel`, `lostpointercapture`, lưu thành công/lỗi và quy tắc: lưu nét không tự hoàn thành kỹ năng Viết, chỉ câu đúng mới tạo điểm/hoàn thành.
 
 > Các clip Mandarin tuần 1 là **neural TTS đã kiểm tra kỹ thuật về tệp/thời lượng/hash**, chưa phải bản được người bản ngữ thẩm định. App không tuyên bố đã có kiểm duyệt phát âm bởi người bản ngữ.
 

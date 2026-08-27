@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { calculateLessonCompletion, getNextLesson, normalizeChinese, scoreTranscript } from "./assessment";
 import { createBackup, defaultProgress, parseBackup } from "./storage";
 import { audioManifest, getLessonById, lessons, videoManifest } from "@/data/courseData";
-import { audioAssets, getAudioAsset, getVocabularyAudioAssetId, w01ReadingPractice, w01ToneDrillAssetIds } from "@/data/mediaManifest";
+import { audioAssets, getAudioAsset, getReadingAudioAssetId, getVocabularyAudioAssetId, w01ReadingPractice, w01ToneDrillAssetIds } from "@/data/mediaManifest";
 import { mockTests } from "@/data/mockTests";
 
 describe("assessment", () => {
@@ -38,14 +38,31 @@ describe("catalog 24 tuần", () => {
   });
   it("có manifest audio theo 144 lesson, video nội bộ khi có và 24 nguồn YouTube là video cụ thể", () => { expect(audioManifest).toHaveLength(144); expect(videoManifest).toHaveLength(24); expect(audioManifest.some((audio) => audio.status === "available")).toBe(true); expect(videoManifest.some((video) => video.status === "available" && video.videoSrc && video.captionsSrc)).toBe(true); const sources = videoManifest.map((video) => video.externalSource); expect(sources.every((source) => source?.provider === "youtube" && source.specificity === "specific-video" && /^https:\/\/www\.youtube\.com\/watch\?v=[A-Za-z0-9_-]{11}$/.test(source.sourceUrl) && /^https:\/\/www\.youtube-nocookie\.com\/embed\/[A-Za-z0-9_-]{11}\?rel=0&playsinline=1$/.test(source.embedUrl) && source.sourceUrl.endsWith(source.videoId) && source.channel && source.sourceTitle && source.checkedAt)).toBe(true); expect(new Set(sources.map((source) => source?.videoId)).size).toBe(24); });
   it("audio Mandarin tuần 1 luôn tham chiếu tệp riêng có Hán tự thuần, hash và thời lượng", () => {
-    expect(audioAssets).toHaveLength(8);
-    for (const asset of audioAssets) {
+    const weekOneAssets = audioAssets.filter((asset) => asset.id.startsWith("w01-"));
+    expect(weekOneAssets).toHaveLength(8);
+    for (const asset of weekOneAssets) {
       expect(asset.src).toMatch(/^\/manus-storage\/.+\.wav$/);
       expect(asset.spokenTextHanzi).toMatch(/^[\p{Script=Han}。！？]+$/u);
       expect(asset.spokenTextHanzi).not.toMatch(/[A-Za-z0-9]/);
       expect(asset.durationSeconds).toBeGreaterThan(0);
       expect(asset.sha256).toMatch(/^[a-f0-9]{64}$/);
       expect(asset.reviewStatus).toBe("generated-technical-verified");
+    }
+  });
+  it("18 lesson Đọc tuần 2–4 có audio Mandarin riêng trùng nguyên văn đoạn đang học", () => {
+    const readingLessons = lessons.filter((lesson) => lesson.week >= 2 && lesson.week <= 4);
+    const readingAssets = audioAssets.filter((asset) => asset.kind === "reading");
+    expect(readingLessons).toHaveLength(18);
+    expect(readingAssets).toHaveLength(18);
+    expect(new Set(readingAssets.map((asset) => asset.lessonId)).size).toBe(18);
+    for (const lesson of readingLessons) {
+      const assetId = getReadingAudioAssetId(lesson.id);
+      const asset = getAudioAsset(assetId);
+      expect(lesson.reading.audioAssetId).toBe(assetId);
+      expect(asset).toMatchObject({ lessonId: lesson.id, kind: "reading", spokenTextHanzi: lesson.reading.passage, source: "neural-tts-generated", voice: "Charon", reviewStatus: "generated-technical-verified" });
+      expect(asset?.src).toMatch(/^\/manus-storage\/w0[2-4]-s0[1-6]-reading_.+\.wav$/);
+      expect(asset?.durationSeconds).toBeGreaterThan(10);
+      expect(asset?.sha256).toMatch(/^[a-f0-9]{64}$/);
     }
   });
   it("luồng tuần 1 map đúng từng thanh và câu đọc, không dùng chỉ số audio tùy ý", () => {

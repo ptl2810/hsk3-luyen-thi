@@ -1,0 +1,76 @@
+Uploading file (webdev private): w02-s01-reading.wav (size: 691244 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w02-s01-reading_1698fc9b.wav
+Uploading file (webdev private): w02-s02-reading.wav (size: 743084 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w02-s02-reading_3fa94fbe.wav
+Uploading file (webdev private): w02-s03-reading.wav (size: 666284 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w02-s03-reading_dfeca580.wav
+Uploading file (webdev private): w02-s04-reading.wav (size: 718124 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w02-s04-reading_5c0e044c.wav
+Uploading file (webdev private): w02-s05-reading.wav (size: 554924 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w02-s05-reading_108a2e58.wav
+Uploading file (webdev private): w02-s06-reading.wav (size: 731564 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w02-s06-reading_1970c305.wav
+Uploading file (webdev private): w03-s01-reading.wav (size: 679724 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w03-s01-reading_df69bef4.wav
+Uploading file (webdev private): w03-s02-reading.wav (size: 712364 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w03-s02-reading_d5db47e2.wav
+Uploading file (webdev private): w03-s03-reading.wav (size: 618284 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w03-s03-reading_89148645.wav
+Uploading file (webdev private): w03-s04-reading.wav (size: 652844 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w03-s04-reading_3e3f74ac.wav
+Uploading file (webdev private): w03-s05-reading.wav (size: 673964 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w03-s05-reading_c101a5cd.wav
+Uploading file (webdev private): w03-s06-reading.wav (size: 666284 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w03-s06-reading_654f6b59.wav
+Uploading file (webdev private): w04-s01-reading.wav (size: 919724 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w04-s01-reading_11f6b027.wav
+Uploading file (webdev private): w04-s02-reading.wav (size: 720044 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w04-s02-reading_c21f1726.wav
+Uploading file (webdev private): w04-s03-reading.wav (size: 727724 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w04-s03-reading_b83d7848.wav
+Uploading file (webdev private): w04-s04-reading.wav (size: 777644 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w04-s04-reading_251de3e9.wav
+Uploading file (webdev private): w04-s05-reading.wav (size: 729644 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w04-s05-reading_a4baf896.wav
+Uploading file (webdev private): w04-s06-reading.wav (size: 798764 bytes)
+File uploaded successfully!
+Storage Path: /manus-storage/w04-s06-reading_6e34ddab.wav
+
+========== Upload Summary ==========
+[SUCCESS] w02-s01-reading.wav -> /manus-storage/w02-s01-reading_1698fc9b.wav
+[SUCCESS] w02-s02-reading.wav -> /manus-storage/w02-s02-reading_3fa94fbe.wav
+[SUCCESS] w02-s03-reading.wav -> /manus-storage/w02-s03-reading_dfeca580.wav
+[SUCCESS] w02-s04-reading.wav -> /manus-storage/w02-s04-reading_5c0e044c.wav
+[SUCCESS] w02-s05-reading.wav -> /manus-storage/w02-s05-reading_108a2e58.wav
+[SUCCESS] w02-s06-reading.wav -> /manus-storage/w02-s06-reading_1970c305.wav
+[SUCCESS] w03-s01-reading.wav -> /manus-storage/w03-s01-reading_df69bef4.wav
+[SUCCESS] w03-s02-reading.wav -> /manus-storage/w03-s02-reading_d5db47e2.wav
+[SUCCESS] w03-s03-reading.wav -> /manus-storage/w03-s03-reading_89148645.wav
+[SUCCESS] w03-s04-reading.wav -> /manus-storage/w03-s04-reading_3e3f74ac.wav
+[SUCCESS] w03-s05-reading.wav -> /manus-storage/w03-s05-reading_c101a5cd.wav
+[SUCCESS] w03-s06-reading.wav -> /manus-storage/w03-s06-reading_654f6b59.wav
+[SUCCESS] w04-s01-reading.wav -> /manus-storage/w04-s01-reading_11f6b027.wav
+[SUCCESS] w04-s02-reading.wav -> /manus-storage/w04-s02-reading_c21f1726.wav
+[SUCCESS] w04-s03-reading.wav -> /manus-storage/w04-s03-reading_b83d7848.wav
+[SUCCESS] w04-s04-reading.wav -> /manus-storage/w04-s04-reading_251de3e9.wav
+[SUCCESS] w04-s05-reading.wav -> /manus-storage/w04-s05-reading_a4baf896.wav
+[SUCCESS] w04-s06-reading.wav -> /manus-storage/w04-s06-reading_6e34ddab.wav
+=====================================
+Total: 18, Success: 18, Failed: 0

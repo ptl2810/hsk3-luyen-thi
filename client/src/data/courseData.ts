@@ -2,7 +2,7 @@
  * Mực Đỏ Thực Hành: Catalog HSK3 v2 — 24 tuần × 6 buổi, toàn bộ panel lấy từ dữ liệu này.
  * Media có trạng thái rõ ràng: tệp thật được ưu tiên, bài chưa có tệp hiển thị trạng thái chờ sản xuất.
  */
-import { getVocabularyAudioAssetId } from "@/data/mediaManifest";
+import { getReadingAudioAssetId, getVocabularyAudioAssetId } from "@/data/mediaManifest";
 import type { ChoiceQuestion, Lesson, VideoContext, VocabularyWord } from "@/lib/types";
 
 type TopicVocabulary = [string, string, string, string];
@@ -297,6 +297,7 @@ function makeLesson(seed: TopicSeed, week: number, session: number): Lesson {
   ];
   const lessonSentence = lessonSentences[session - 1];
   const readingContent = makeReadingContent(seed, session);
+  const readingAudioAssetId = getReadingAudioAssetId(id);
   const listeningContent = makeListeningContent(seed, session);
   const grammarBySession = [
     { title: `Từ khóa: ${seed.grammar.title}`, formula: `Từ trọng tâm → ${seed.grammar.formula}`, explanation: `Nhìn vào các từ trọng tâm trước khi áp dụng cấu trúc. ${seed.grammar.explanation}` },
@@ -329,7 +330,7 @@ function makeLesson(seed: TopicSeed, week: number, session: number): Lesson {
     vocabulary,
     listening: { audioSrc: fileAudio?.src ?? null, transcript: audioScript.hanzi, pinyin: audioScript.pinyin, translation: audioScript.translation, questions: [questionOne, questionTwo] },
     speaking: { target: lessonSentence.hanzi, pinyin: lessonSentence.pinyin, translation: lessonSentence.translation, scenario: `Buổi ${session}: ${seed.videoTitle.toLowerCase()}. Hãy nói câu mẫu chậm, rõ và theo đúng ngữ cảnh.`, checkpoints: ["Nghe câu mẫu một lượt.", "Chọn một biến thể và nói lại theo ngữ cảnh.", "Ghi âm hoặc tự nhập transcript để đối chiếu những từ còn thiếu/dư."], variations: [seed.target, { hanzi: `我想练习：${seed.target.hanzi}`, pinyin: `Wǒ xiǎng liànxí: ${seed.target.pinyin}`, translation: `Tôi muốn luyện: ${seed.target.translation}` }, { hanzi: `请你再说一遍：${seed.target.hanzi}`, pinyin: `Qǐng nǐ zài shuō yí biàn: ${seed.target.pinyin}`, translation: `Bạn hãy nói lại một lượt: ${seed.target.translation}` }] },
-    reading: { passage: readingContent.hanzi, pinyin: readingContent.pinyin, translation: readingContent.translation, hints: seed.vocabulary.slice(0, 4).map(([hanzi, pinyin, meaning]) => ({ hanzi, pinyin, meaning })), questions: [readingQuestionOne, readingQuestionTwo, readingQuestionThree] },
+    reading: { passage: readingContent.hanzi, pinyin: readingContent.pinyin, translation: readingContent.translation, ...(readingAudioAssetId ? { audioAssetId: readingAudioAssetId } : {}), hints: seed.vocabulary.slice(0, 4).map(([hanzi, pinyin, meaning]) => ({ hanzi, pinyin, meaning })), questions: [readingQuestionOne, readingQuestionTwo, readingQuestionThree] },
     writing: { characters, sentenceTask, fillBlankTask }, writingCharacters: characters,
     media: { audioId: `audio-${id}`, videoId: `week-${String(week).padStart(2, "0")}`, posterSrc: week === 8 ? "/manus-storage/week08-shopping-poster_0973a7ef.jpg" : null, videoSrc: week === 8 ? "/manus-storage/week08-shopping-scene-1_2d65c2bf.mp4" : null, captionsSrc: week === 8 ? "/manus-storage/week08-shopping_b5eb9f94.vtt" : null },
   };

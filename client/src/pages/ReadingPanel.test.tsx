@@ -22,4 +22,13 @@ describe("ReadingPanel", () => {
     expect(completeSection).toHaveBeenCalledWith("reading", 100);
     expect(screen.getByRole("status").textContent).toContain("3/3 đúng");
   });
+
+  it("phát đúng audio tệp của đoạn Đọc tuần 2", () => {
+    const onPlayAudioAsset = vi.fn();
+    const lesson = lessons.find((item) => item.id === "w02-s01");
+    expect(lesson?.reading.audioAssetId).toBe("w02-s01-reading");
+    render(<ReadingPanel lesson={lesson!} progress={defaultProgress()} courseProgress={0} lessonProgress={0} activeSection="reading" updateSection={vi.fn()} startLesson={vi.fn()} weakestSkill="reading" hasAttempt={false} pinyinVisible setPinyinVisible={vi.fn()} translationVisible setTranslationVisible={vi.fn()} listeningAnswer="" setListeningAnswer={vi.fn()} readingAnswer="" setReadingAnswer={vi.fn()} writingSentence="" setWritingSentence={vi.fn()} feedback={{ listening: null, reading: null, writing: null }} submitChoice={vi.fn()} submitWriting={vi.fn()} completeSection={vi.fn()} recordExercise={vi.fn()} markAudioPlayed={vi.fn()} toggleDifficult={vi.fn()} onSpeakVocabulary={vi.fn()} onPlayAudioAsset={onPlayAudioAsset} onWritingPracticeSaved={vi.fn()} playingAudioAssetId={null} />);
+    fireEvent.click(screen.getByRole("button", { name: "Nghe đoạn" }));
+    expect(onPlayAudioAsset).toHaveBeenCalledWith("w02-s01-reading");
+  });
 });

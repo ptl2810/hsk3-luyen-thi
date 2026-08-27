@@ -79,3 +79,10 @@
 - [x] Mở rộng script Nghe, kịch bản Nói và nhiệm vụ Viết theo chủ đề tuần; giữ nội dung dữ liệu hóa, không đặt cứng trong giao diện.
 - [x] Nâng schema/UI để hiển thị đoạn đầy đặn, danh sách câu hỏi và phản hồi phù hợp với bài tập đã mở rộng.
 - [x] Thêm validator/test về độ dài nội dung, độ đa dạng câu hỏi, tính nhất quán đáp án và kiểm thử hồi quy 144 lesson.
+
+## Đợt audio Mandarin cho đoạn Đọc tuần 2–4
+
+- [x] Xác định 18 đoạn Đọc tuần 2–4 trong catalog và lập danh sách tệp theo `lessonId`, không dùng lại clip của bài khác.
+- [x] Tạo 18 tệp audio Mandarin có nội dung trùng đoạn Đọc; kiểm tra thời lượng, hash và tải được từ kho tài sản web.
+- [x] Bổ sung manifest mô tả từng clip, gắn `reading.audioAssetId` đúng lesson và giữ trạng thái kiểm tra kỹ thuật, không gắn nhãn thẩm định người bản ngữ.
+- [x] Thêm validator/test phủ audio Đọc, kiểm tra phát tệp và xuất bản đợt audio tuần 2–4.

@@ -18,12 +18,13 @@ export interface VocabularyWord {
   audioAssetId?: string;
 }
 
-export type AudioAssetKind = "tone-drill" | "vocabulary" | "reading-practice" | "listening";
+export type AudioAssetKind = "tone-drill" | "vocabulary" | "reading-practice" | "reading" | "listening";
 export type AudioReviewStatus = "generated-technical-verified" | "pending-human-review";
 
 export interface AudioAsset {
   id: string;
   kind: AudioAssetKind;
+  lessonId?: string;
   spokenTextHanzi: string;
   displayPinyin: string;
   translation: string;
@@ -83,6 +84,7 @@ export interface ReadingContent {
   passage: string;
   pinyin: string;
   translation: string;
+  audioAssetId?: string;
   hints: Array<{ hanzi: string; pinyin: string; meaning: string }>;
   questions: ChoiceQuestion[];
 }
