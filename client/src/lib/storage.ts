@@ -1,39 +1,77 @@
 /**
- * Mực Đỏ Thực Hành: Lưu tiến độ cục bộ có version; IndexedDB chỉ dành cho dữ liệu nặng như audio/nét viết.
+ * Mực Đỏ Thực Hành: Tiến độ v2 bắt đầu trống, migration v1 giữ dữ liệu học đã có; media nặng ở IndexedDB.
  */
 import type { LearningProgress, SkillId } from "@/lib/types";
 
 const PROGRESS_KEY = "hoa-ngu-180-progress-v1";
 const DB_NAME = "hoa-ngu-180-media-v1";
 
+type LegacyProgress = {
+  schemaVersion?: number;
+  currentLessonId?: string;
+  currentSection?: SkillId;
+  completedLessonIds?: string[];
+  completedSections?: Record<string, SkillId[]>;
+  exerciseResults?: LearningProgress["exerciseResults"];
+  difficultWordIds?: string[];
+  skills?: LearningProgress["skills"];
+  totalMinutes?: number;
+  streakDays?: number;
+  lastStudiedAt?: string | null;
+  settings?: Partial<LearningProgress["settings"]>;
+};
+
 export const defaultProgress = (): LearningProgress => ({
-  schemaVersion: 1,
-  currentLessonId: "w01-s02",
-  currentSection: "speaking",
-  completedLessonIds: ["w01-s01"],
-  completedSections: { "w01-s01": ["listening", "speaking", "reading", "writing"], "w01-s02": ["listening"] },
+  schemaVersion: 2,
+  currentLessonId: null,
+  currentSection: "listening",
+  completedLessonIds: [],
+  completedSections: {},
   exerciseResults: [],
   difficultWordIds: [],
   skills: {
-    listening: { lastScore: 62, average: 62, attempts: 1 },
-    speaking: { lastScore: 48, average: 48, attempts: 1 },
-    reading: { lastScore: 76, average: 76, attempts: 1 },
-    writing: { lastScore: 54, average: 54, attempts: 1 },
+    listening: { lastScore: 0, average: 0, attempts: 0 },
+    speaking: { lastScore: 0, average: 0, attempts: 0 },
+    reading: { lastScore: 0, average: 0, attempts: 0 },
+    writing: { lastScore: 0, average: 0, attempts: 0 },
   },
-  totalMinutes: 75,
-  streakDays: 3,
+  totalMinutes: 0,
+  streakDays: 0,
   lastStudiedAt: null,
+  audioPlayCounts: {},
+  reviewedWordIds: [],
   settings: { showPinyin: true, showTranslation: true, speechRate: 0.8, volume: 1, compactMode: false },
 });
+
+function migrateProgress(raw: LegacyProgress | LearningProgress): LearningProgress {
+  const isLegacyDemo = raw.schemaVersion === 1 && raw.currentLessonId === "w01-s02" && raw.totalMinutes === 75 && raw.streakDays === 3 && raw.exerciseResults?.length === 0 && raw.completedLessonIds?.length === 1 && raw.completedLessonIds[0] === "w01-s01";
+  if (isLegacyDemo) return defaultProgress();
+  const base = defaultProgress();
+  return {
+    ...base,
+    ...raw,
+    schemaVersion: 2,
+    currentLessonId: raw.currentLessonId ?? null,
+    currentSection: raw.currentSection ?? "listening",
+    completedLessonIds: raw.completedLessonIds ?? [],
+    completedSections: raw.completedSections ?? {},
+    exerciseResults: raw.exerciseResults ?? [],
+    difficultWordIds: raw.difficultWordIds ?? [],
+    skills: { ...base.skills, ...raw.skills },
+    audioPlayCounts: "audioPlayCounts" in raw && raw.audioPlayCounts ? raw.audioPlayCounts : {},
+    reviewedWordIds: "reviewedWordIds" in raw && raw.reviewedWordIds ? raw.reviewedWordIds : [],
+    settings: { ...base.settings, ...raw.settings },
+  };
+}
 
 export function loadProgress(): LearningProgress {
   if (typeof window === "undefined") return defaultProgress();
   try {
     const raw = window.localStorage.getItem(PROGRESS_KEY);
     if (!raw) return defaultProgress();
-    const parsed = JSON.parse(raw) as LearningProgress;
-    if (parsed.schemaVersion !== 1) return defaultProgress();
-    return { ...defaultProgress(), ...parsed, settings: { ...defaultProgress().settings, ...parsed.settings } };
+    const parsed = JSON.parse(raw) as LegacyProgress | LearningProgress;
+    if (parsed.schemaVersion !== 1 && parsed.schemaVersion !== 2) return defaultProgress();
+    return migrateProgress(parsed);
   } catch {
     return defaultProgress();
   }
@@ -44,15 +82,15 @@ export function persistProgress(progress: LearningProgress) {
 }
 
 export function createBackup(progress: LearningProgress): string {
-  return JSON.stringify({ schemaVersion: 1, exportedAt: new Date().toISOString(), progress }, null, 2);
+  return JSON.stringify({ schemaVersion: 2, exportedAt: new Date().toISOString(), progress }, null, 2);
 }
 
 export function parseBackup(text: string): LearningProgress {
-  const parsed = JSON.parse(text) as { schemaVersion?: number; progress?: LearningProgress };
-  if (parsed.schemaVersion !== 1 || !parsed.progress || parsed.progress.schemaVersion !== 1) {
-    throw new Error("Tệp sao lưu không đúng định dạng Hoa Ngữ 180 Ngày phiên bản 1.");
+  const parsed = JSON.parse(text) as { schemaVersion?: number; progress?: LegacyProgress | LearningProgress };
+  if ((parsed.schemaVersion !== 1 && parsed.schemaVersion !== 2) || !parsed.progress) {
+    throw new Error("Tệp sao lưu không đúng định dạng Hoa Ngữ 180 Ngày.");
   }
-  return { ...defaultProgress(), ...parsed.progress, settings: { ...defaultProgress().settings, ...parsed.progress.settings } };
+  return migrateProgress(parsed.progress);
 }
 
 function openMediaDb(): Promise<IDBDatabase> {
@@ -79,10 +117,5 @@ async function storeLargeData(key: string, value: Blob | string) {
   db.close();
 }
 
-export async function saveAudioRecord(lessonId: string, blob: Blob) {
-  return storeLargeData(`audio:${lessonId}:${Date.now()}`, blob);
-}
-
-export async function saveWritingPractice(lessonId: string, imageData: string, skill: SkillId = "writing") {
-  return storeLargeData(`${skill}:${lessonId}:${Date.now()}`, imageData);
-}
+export async function saveAudioRecord(lessonId: string, blob: Blob) { return storeLargeData(`audio:${lessonId}:${Date.now()}`, blob); }
+export async function saveWritingPractice(lessonId: string, imageData: string, skill: SkillId = "writing") { return storeLargeData(`${skill}:${lessonId}:${Date.now()}`, imageData); }

@@ -22,10 +22,12 @@ type RecognitionConstructor = new () => RecognitionLike;
 interface SpeakingPracticeProps {
   lessonId: string;
   target: string;
-  onCompleted: (score: number) => void;
+  scenario: string;
+  checkpoints: string[];
+  onCompleted: (score: number, transcript: string) => void;
 }
 
-export function SpeakingPractice({ lessonId, target, onCompleted }: SpeakingPracticeProps) {
+export function SpeakingPractice({ lessonId, target, scenario, checkpoints, onCompleted }: SpeakingPracticeProps) {
   const [recording, setRecording] = useState(false);
   const [recordUrl, setRecordUrl] = useState<string | null>(null);
   const [transcript, setTranscript] = useState("");
@@ -115,6 +117,7 @@ export function SpeakingPractice({ lessonId, target, onCompleted }: SpeakingPrac
 
   return (
     <div className="speaking-practice">
+      <div className="speaking-context"><b>Tình huống</b><p>{scenario}</p><ol>{checkpoints.map((item) => <li key={item}>{item}</li>)}</ol></div>
       <div className="recording-row">
         {!recording ? (
           <button className="record-button" onClick={startRecording}><Mic size={18} /> Bắt đầu ghi âm</button>
@@ -136,10 +139,9 @@ export function SpeakingPractice({ lessonId, target, onCompleted }: SpeakingPrac
           <div><strong>{feedback.score}% khớp nội dung</strong><span>Điểm luyện tập, không phải điểm thi chính thức.</span></div>
           {feedback.missing.length > 0 && <p>Cần nghe lại: <b lang="zh-CN">{feedback.missing.join(" ")}</b></p>}
           {feedback.extra.length > 0 && <p>Nhận diện thêm: <b lang="zh-CN">{feedback.extra.join(" ")}</b></p>}
-          <button className="text-action" onClick={() => onCompleted(feedback.score)}>Lưu kết quả nói</button>
+          <button className="text-action" onClick={() => onCompleted(feedback.score, transcript)}>Lưu kết quả nói</button>
         </div>
       )}
     </div>
   );
 }
-

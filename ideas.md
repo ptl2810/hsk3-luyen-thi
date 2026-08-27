@@ -68,3 +68,6 @@ Logo là dấu **180** được tạo từ một nét bút liên tục: vòng đ
 - Biểu tượng nét bút **180** và wordmark **Hoa Ngữ 180 Ngày** xuất hiện thường trực ở điều hướng chính; thương hiệu không được trở thành một dashboard vô danh.
 - Đỏ Son Gia Sư **#D84727** là mực phản hồi: dùng cho vòng khoanh, gạch chân, dấu xác nhận, lỗi cần ôn và hành động chính; không dùng như màu trang trí chung chung.
 - Các khu dashboard ưu tiên cảm giác **phiếu luyện được biên tập**: nhãn lề, đường kẻ nhẹ, dải nhiệm vụ lệch trục và cột ghi chú của gia sư thay cho cấu trúc thẻ đồng đều.
+- Trên desktop, cấu trúc mặc định đọc thành ba vùng **điều hướng thương hiệu bên trái / nhiệm vụ trung tâm / ghi chú gia sư bên phải**; topbar chỉ có vai trò phụ trợ.
+- Khu bốn kỹ năng được dàn thành các **dải phiếu lệch trục** có số mục, vệt màu tín hiệu và nét bút đỏ, không hiển thị như bốn thẻ sản phẩm bằng nhau.
+- Hình ảnh học tập luôn được xử lý như một phần tài liệu: có watermark chữ Hán, dấu khoanh/gạch đỏ hoặc nhãn bài đi kèm, không chỉ làm nền trang trí.

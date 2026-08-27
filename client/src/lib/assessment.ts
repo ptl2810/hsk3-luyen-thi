@@ -35,7 +35,9 @@ export function calculateCourseCompletion(progress: LearningProgress, lessons: L
 }
 
 export function getNextLesson(lessons: Lesson[], progress: LearningProgress): Lesson {
-  return lessons.find((lesson) => lesson.id === progress.currentLessonId) ?? lessons[0];
+  const activeLesson = lessons.find((lesson) => lesson.id === progress.currentLessonId);
+  if (activeLesson && calculateLessonCompletion(progress, activeLesson.id) < 100) return activeLesson;
+  return lessons.find((lesson) => calculateLessonCompletion(progress, lesson.id) < 100) ?? lessons[0];
 }
 
 export function getWeakestSkill(progress: LearningProgress): SkillId {

@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { saveWritingPractice } from "@/lib/storage";
 
 interface Point { x: number; y: number }
-interface CharacterGuide { character: string; strokes: number; hint: string }
+interface CharacterGuide { character: string; strokes?: number; hint: string }
 
 interface WritingCanvasProps {
   lessonId: string;
@@ -108,7 +108,7 @@ export function WritingCanvas({ lessonId, guides, onCompleted }: WritingCanvasPr
       <div className="character-switcher" aria-label="Chọn chữ mẫu">
         {guides.map((item, index) => <button key={item.character} className={selected === index ? "is-selected" : ""} onClick={() => { setSelected(index); setStrokes([]); setActiveStroke(null); }} lang="zh-CN">{item.character}</button>)}
       </div>
-      <div className="canvas-meta"><span lang="zh-CN">{guide.character}</span><p><b>{guide.strokes} nét.</b> {guide.hint}</p></div>
+      <div className="canvas-meta"><span lang="zh-CN">{guide.character}</span><p><b>{guide.strokes ? `${guide.strokes} nét.` : "Đang biên soạn số nét."}</b> {guide.hint}</p></div>
       <canvas ref={canvasRef} width={720} height={400} className="practice-surface" onPointerDown={startStroke} onPointerMove={moveStroke} onPointerUp={endStroke} onPointerCancel={endStroke} />
       <div className="canvas-controls">
         <button className="mini-action" onClick={() => setStrokes((items) => items.slice(0, -1))} disabled={!strokes.length}><Undo2 size={16} /> Hoàn tác</button>
@@ -122,4 +122,3 @@ export function WritingCanvas({ lessonId, guides, onCompleted }: WritingCanvasPr
     </div>
   );
 }
-
