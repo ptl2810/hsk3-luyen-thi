@@ -71,3 +71,5 @@ Logo là dấu **180** được tạo từ một nét bút liên tục: vòng đ
 - Trên desktop, cấu trúc mặc định đọc thành ba vùng **điều hướng thương hiệu bên trái / nhiệm vụ trung tâm / ghi chú gia sư bên phải**; topbar chỉ có vai trò phụ trợ.
 - Khu bốn kỹ năng được dàn thành các **dải phiếu lệch trục** có số mục, vệt màu tín hiệu và nét bút đỏ, không hiển thị như bốn thẻ sản phẩm bằng nhau.
 - Hình ảnh học tập luôn được xử lý như một phần tài liệu: có watermark chữ Hán, dấu khoanh/gạch đỏ hoặc nhãn bài đi kèm, không chỉ làm nền trang trí.
+- Khu bốn kỹ năng trên desktop dùng một chuỗi phiếu chồng lệch, có đường lề dọc và chỉ dấu số thứ tự; mỗi tiêu đề có gạch sửa đỏ để thể hiện hành vi của gia sư.
+- Liên kết video ngoài được thể hiện bằng phiếu nguồn riêng: nền đỏ nhạt, ghi rõ kênh, trạng thái kiểm chứng và luôn mở ở tab mới để người học không nhầm với video nội bộ.

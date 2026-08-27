@@ -188,6 +188,32 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 @media (max-width: 450px) { .topbar-actions { gap: 8px; }.streak-chip { display: none; }.welcome-copy h1 { font-size: 32px; }.task-sheet { padding: 17px 15px 0; }.skill-rail { margin: 0 -15px; }.lesson-title-row h2 { font-size: 21px; }.lesson-progress-ring { width: 63px; height: 63px; }.lesson-progress-ring::before { width: 49px; height: 49px; }.lesson-progress-ring strong { font-size: 14px; }.skill-card { padding: 13px; }.skill-card p { font-size: 9px; }.audio-coach { padding: 14px; }.audio-coach__controls { flex-wrap: wrap; }.speed-picker { margin-left: 0; }.support-toggles { align-items: flex-start; flex-direction: column; }.canvas-controls .mini-action { padding: 6px; font-size: 9px; }.save-writing { margin-left: 0; }.vocab-mini { padding: 11px; }.vocab-mini > b { font-size: 24px; }.vocab-mini p { font-size: 10px; }.data-actions { flex-direction: column; }.data-actions button { justify-content: center; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
 
+/* Mực Đỏ Thực Hành: nguồn video ngoài luôn có đường thoát rõ, tách khỏi media nội bộ. */
+.video-heading__actions { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+.video-source-link { display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; background: #fbeae4; border: 1px solid #e6b3a7; color: #9e2f1c; font-size: 10px; font-weight: 800; text-decoration: none; }
+.video-source-link:hover { background: var(--red); border-color: var(--red); color: #fffdf8; }
+.external-source-note { margin: 0 24px 12px; padding: 9px 11px; background: #f7f2e9; border-left: 2px solid #d5a329; color: #625846; font-size: 10px; line-height: 1.55; }
+.external-source-note b { color: #895b11; }
+@media (max-width: 540px) { .video-heading { align-items: flex-start; flex-direction: column; }.video-heading__actions { justify-content: flex-start; }.external-source-note { margin-left: 18px; margin-right: 18px; } }
+
+/* Mực Đỏ Thực Hành: bốn kỹ năng là một chuỗi phiếu có lề và dấu sửa, không phải lưới thẻ SaaS. */
+@media (min-width: 801px) {
+  .skill-overview { position: relative; padding: 8px 0 12px 31px; border-left: 1px solid #c7d1cb; }
+  .skill-overview::before { content: "BÀI LUYỆN 01—04"; position: absolute; left: -1px; top: 55px; transform: translateX(-100%) rotate(-90deg); transform-origin: right top; color: #9b9f96; font-size: 8px; font-weight: 800; letter-spacing: .15em; white-space: nowrap; }
+  .skill-overview::after { content: "一 二 三 四"; position: absolute; right: 5px; top: -4px; color: rgb(216 71 39 / .18); font-family: "Noto Serif SC", serif; font-size: 24px; letter-spacing: .25em; pointer-events: none; }
+  .skills-grid { position: relative; display: grid; grid-template-columns: 1.15fr .88fr 1.07fr; gap: 0; margin-top: 19px; padding: 0 11px 25px 0; background: linear-gradient(90deg, transparent 0 2%, #d8d4c9 2% calc(2% + 1px), transparent calc(2% + 1px)); }
+  .skill-card { min-height: 165px; border-color: #d6d1c6; box-shadow: 6px 7px 0 #e8e1d5; }
+  .skill-card::before { content: ""; position: absolute; top: 14px; right: 14px; width: 18px; height: 18px; border: 1px solid currentColor; border-radius: 50%; opacity: .38; }
+  .skill-card:nth-child(1) { z-index: 3; transform: rotate(-.35deg); }
+  .skill-card:nth-child(2) { z-index: 2; margin: 20px 0 -20px -11px; background: #fcfdf9; transform: rotate(.25deg); }
+  .skill-card:nth-child(3) { z-index: 1; margin: 7px 0 -7px -10px; background: #fffdf8; transform: rotate(-.15deg); }
+  .skill-card:nth-child(4) { grid-column: 2 / 4; width: calc(100% - 43px); min-height: 139px; margin: 13px 0 0 28px; padding-left: 24px; transform: rotate(.2deg); }
+  .skill-card:nth-child(4)::after { width: 68px; }
+  .skill-card:hover { z-index: 5; transform: translateY(-4px) rotate(0deg); box-shadow: 9px 11px 0 #e0d7ca; }
+  .skill-card h3 { position: relative; display: inline-block; }
+  .skill-card h3::after { content: ""; position: absolute; left: 0; right: 8px; bottom: -5px; height: 2px; background: var(--red); transform: rotate(-1deg); opacity: .78; }
+}
+
 /* Mực Đỏ Thực Hành: các công tắc lớp hỗ trợ là nhãn giấy nhỏ, không cạnh tranh với nút chính. */
 .support-toggles > div { display: flex; gap: 5px; }
 .support-toggles > div button { padding: 5px 7px; background: #eeeae1; color: #70766e; font-size: 9px; }

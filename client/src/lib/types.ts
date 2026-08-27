@@ -79,6 +79,15 @@ export interface VideoContext {
   question: ChoiceQuestion;
   status: MediaStatus;
   rights: string;
+  externalSource?: {
+    provider: "youtube" | "tiktok";
+    sourceUrl: string;
+    channel: string;
+    sourceTitle: string;
+    display: "external-link" | "embed";
+    checkedAt: string;
+    note: string;
+  };
 }
 
 export interface Lesson {

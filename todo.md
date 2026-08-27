@@ -29,5 +29,20 @@
 - [x] Xác nhận repository đồng bộ `ptl2810/hsk3-luyen-thi` là đích xuất bản; repository `hoa-ngu-180-ngay` không được sử dụng.
 - [x] Xác nhận repository đồng bộ đã chuyển sang Public để đủ điều kiện GitHub Pages miễn phí.
 - [x] Kiểm tra cấu hình GitHub Pages và bật nguồn GitHub Actions trên repository đồng bộ.
-- [ ] Theo dõi workflow deploy đầu tiên và xác minh URL GitHub Pages.
+- [x] Theo dõi workflow deploy đầu tiên và xác minh URL GitHub Pages; deployment #5 thành công và trang chủ tải đúng.
 - [ ] Bàn giao URL Pages, quyền quản lý và lưu ý các asset media đang chờ chuyển.
+
+## Nghiên cứu nguồn video HSK3 bên ngoài
+
+- [x] Xác định tiêu chí chọn nguồn, quy tắc nhúng của YouTube/TikTok và chủ đề video cần phủ theo 24 tuần.
+- [x] Tìm các kênh và video công khai theo nhóm: pinyin, hội thoại đời sống, HSK3, ngữ pháp, luyện nghe và viết chữ.
+- [x] Mở và kiểm chứng từng nguồn ưu tiên về khả năng xem công khai, nhúng/liên kết, transcript và quyền sử dụng.
+- [x] Lập manifest với URL, chủ đề phù hợp, nền tảng, kênh, cách hiển thị và trạng thái kiểm chứng.
+- [ ] Bàn giao danh mục nguồn có trích dẫn cùng đề xuất tích hợp vào 24 video tình huống.
+
+## Sửa tương tác từ vựng và nguồn video
+
+- [x] Rà soát handler nút Nghe của từ vựng, component video và trường media theo lesson.
+- [x] Kết nối nút Nghe với SpeechSynthesis tiếng Hoa, nêu lỗi khi trình duyệt không hỗ trợ hoặc không có giọng Hoa.
+- [x] Bổ sung trường external source và nút mở video nguồn cho các tuần có nguồn đã kiểm chứng.
+- [x] Kiểm tra luồng trên desktop/mobile, build và cập nhật hướng dẫn người dùng.

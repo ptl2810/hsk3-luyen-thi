@@ -29,15 +29,19 @@ export function AudioCoach({ chinese, pinyin, translation, rate = 0.8, volume = 
       setNotice("Không có audio tệp và trình duyệt chưa hỗ trợ giọng đọc. Hãy dùng transcript bên dưới để tự luyện.");
       return;
     }
-    window.speechSynthesis.cancel();
+    const synth = window.speechSynthesis;
+    synth.cancel();
     const utterance = new SpeechSynthesisUtterance(chinese);
-    utterance.lang = "zh-CN";
+    const chineseVoice = synth.getVoices().find((voice) => /^(zh|cmn)(-|_)/i.test(voice.lang));
+    if (chineseVoice) utterance.voice = chineseVoice;
+    utterance.lang = chineseVoice?.lang || "zh-CN";
     utterance.rate = speed;
     utterance.volume = volume;
-    utterance.onstart = () => { setIsLoading(false); setIsPlaying(true); setNotice(reason ?? "Đang dùng giọng đọc của trình duyệt cho câu mẫu này."); };
+    utterance.onstart = () => { setIsLoading(false); setIsPlaying(true); setNotice(reason ?? (chineseVoice ? "Đang dùng giọng tiếng Hoa của trình duyệt cho câu mẫu này." : "Đang dùng giọng đọc mặc định của thiết bị cho câu mẫu này.")); };
     utterance.onend = () => { setIsPlaying(false); onCompleted?.(); };
     utterance.onerror = () => { setIsLoading(false); setIsPlaying(false); setNotice("Không thể phát giọng đọc lúc này. Bạn vẫn có thể đọc transcript và thử nói lại."); };
-    window.speechSynthesis.speak(utterance);
+    synth.resume();
+    synth.speak(utterance);
   };
 
   const play = () => {
