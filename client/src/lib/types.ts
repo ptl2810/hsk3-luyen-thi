@@ -1,5 +1,6 @@
 /**
- * Mực Đỏ Thực Hành: Schema version 2 tách nội dung, câu hỏi và media khỏi giao diện.
+ * Mực Đỏ Thực Hành: Schema version 2 tách nội dung, câu hỏi và media khỏi giao diện;
+ * audio học chính thức luôn được mô tả bằng manifest tệp, không dựa vào TTS thiết bị.
  */
 export type SkillId = "listening" | "speaking" | "reading" | "writing";
 
@@ -14,6 +15,25 @@ export interface VocabularyWord {
   partOfSpeech: string;
   example: string;
   exampleMeaning: string;
+  audioAssetId?: string;
+}
+
+export type AudioAssetKind = "tone-drill" | "vocabulary" | "reading-practice" | "listening";
+export type AudioReviewStatus = "generated-technical-verified" | "pending-human-review";
+
+export interface AudioAsset {
+  id: string;
+  kind: AudioAssetKind;
+  spokenTextHanzi: string;
+  displayPinyin: string;
+  translation: string;
+  fileName: string;
+  src: string;
+  durationSeconds: number;
+  sha256: string;
+  source: "neural-tts-generated" | "recorded-original";
+  voice: string;
+  reviewStatus: AudioReviewStatus;
 }
 
 export interface ChoiceOption {
@@ -82,9 +102,12 @@ export interface VideoContext {
   externalSource?: {
     provider: "youtube" | "tiktok";
     sourceUrl: string;
+    videoId: string;
+    embedUrl: string;
     channel: string;
     sourceTitle: string;
     display: "external-link" | "embed";
+    specificity: "specific-video";
     checkedAt: string;
     note: string;
   };

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { calculateLessonCompletion, getNextLesson, normalizeChinese, scoreTranscript } from "./assessment";
 import { createBackup, defaultProgress, parseBackup } from "./storage";
 import { audioManifest, getLessonById, lessons, videoManifest } from "@/data/courseData";
+import { audioAssets, getAudioAsset, getVocabularyAudioAssetId, w01ReadingPractice, w01ToneDrillAssetIds } from "@/data/mediaManifest";
 import { mockTests } from "@/data/mockTests";
 
 describe("assessment", () => {
@@ -24,7 +25,27 @@ describe("catalog 24 tuần", () => {
     const wordIds = lessons.flatMap((lesson) => lesson.vocabulary.map((word) => word.id)); expect(new Set(wordIds).size).toBe(wordIds.length);
     for (const question of lessons.flatMap((lesson) => [...lesson.listening.questions, ...lesson.reading.questions])) expect(question.options.some((option) => option.id === question.answer)).toBe(true);
   });
-  it("có manifest audio theo 144 lesson, manifest video theo 24 tuần, asset thật và nguồn ngoài minh bạch", () => { expect(audioManifest).toHaveLength(144); expect(videoManifest).toHaveLength(24); expect(audioManifest.some((audio) => audio.status === "available")).toBe(true); expect(videoManifest.some((video) => video.status === "available" && video.videoSrc && video.captionsSrc)).toBe(true); expect(videoManifest.every((video) => video.externalSource?.sourceUrl.startsWith("https://"))).toBe(true); expect(videoManifest.every((video) => video.externalSource?.channel && video.externalSource.checkedAt)).toBe(true); });
+  it("có manifest audio theo 144 lesson, video nội bộ khi có và 24 nguồn YouTube là video cụ thể", () => { expect(audioManifest).toHaveLength(144); expect(videoManifest).toHaveLength(24); expect(audioManifest.some((audio) => audio.status === "available")).toBe(true); expect(videoManifest.some((video) => video.status === "available" && video.videoSrc && video.captionsSrc)).toBe(true); const sources = videoManifest.map((video) => video.externalSource); expect(sources.every((source) => source?.provider === "youtube" && source.specificity === "specific-video" && /^https:\/\/www\.youtube\.com\/watch\?v=[A-Za-z0-9_-]{11}$/.test(source.sourceUrl) && /^https:\/\/www\.youtube-nocookie\.com\/embed\/[A-Za-z0-9_-]{11}\?rel=0&playsinline=1$/.test(source.embedUrl) && source.sourceUrl.endsWith(source.videoId) && source.channel && source.sourceTitle && source.checkedAt)).toBe(true); expect(new Set(sources.map((source) => source?.videoId)).size).toBe(24); });
+  it("audio Mandarin tuần 1 luôn tham chiếu tệp riêng có Hán tự thuần, hash và thời lượng", () => {
+    expect(audioAssets).toHaveLength(8);
+    for (const asset of audioAssets) {
+      expect(asset.src).toMatch(/^\/manus-storage\/.+\.wav$/);
+      expect(asset.spokenTextHanzi).toMatch(/^[\p{Script=Han}。！？]+$/u);
+      expect(asset.spokenTextHanzi).not.toMatch(/[A-Za-z0-9]/);
+      expect(asset.durationSeconds).toBeGreaterThan(0);
+      expect(asset.sha256).toMatch(/^[a-f0-9]{64}$/);
+      expect(asset.reviewStatus).toBe("generated-technical-verified");
+    }
+  });
+  it("luồng tuần 1 map đúng từng thanh và câu đọc, không dùng chỉ số audio tùy ý", () => {
+    expect(w01ToneDrillAssetIds.map(getAudioAsset).map((asset) => asset?.spokenTextHanzi)).toEqual(["妈", "麻", "马", "骂", "吗"]);
+    expect(getVocabularyAudioAssetId(1, "妈")).toBe("w01-tone-ma-1");
+    expect(getVocabularyAudioAssetId(1, "好")).toBe("w01-vocab-hao");
+    expect(getVocabularyAudioAssetId(2, "好")).toBeNull();
+    expect(w01ReadingPractice).toMatchObject({ audioAssetId: "w01-reading-wo-shi-xuesheng", hanzi: "我是学生。", pinyin: "Wǒ shì xuéshēng." });
+    expect(w01ReadingPractice.hanzi.replace(/。/g, "")).toHaveLength(4);
+    for (const word of lessons.filter((lesson) => lesson.week === 1).flatMap((lesson) => lesson.vocabulary)) expect(word.audioAssetId && getAudioAsset(word.audioAssetId)).toBeDefined();
+  });
   it("có ba mini test, đề bán phần và mô phỏng 80 câu/85 phút ở tuần 24", () => { const full = mockTests.find((test) => test.id === "full-w24"); expect(mockTests).toHaveLength(5); expect(full?.questions).toHaveLength(80); expect(full?.durationSeconds).toBe(85 * 60); expect(full?.listeningCount).toBe(40); expect(full?.readingCount).toBe(30); expect(full?.writingCount).toBe(10); });
 });
 

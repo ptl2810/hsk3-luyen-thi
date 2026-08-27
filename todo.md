@@ -46,3 +46,19 @@
 - [x] Kết nối nút Nghe với SpeechSynthesis tiếng Hoa, nêu lỗi khi trình duyệt không hỗ trợ hoặc không có giọng Hoa.
 - [x] Bổ sung trường external source và nút mở video nguồn cho các tuần có nguồn đã kiểm chứng.
 - [x] Kiểm tra luồng trên desktop/mobile, build và cập nhật hướng dẫn người dùng.
+
+## Audio thực và video cụ thể theo bài
+
+- [x] Rà soát yêu cầu desktop để áp dụng đúng phần web app: lỗi TTS im lặng được thay bằng phát audio tệp hoặc trạng thái trung thực.
+- [x] Đối chiếu 24 chủ đề lesson với video YouTube cụ thể, chỉ giữ URL công khai có tiêu đề/nội dung khớp bài học.
+- [x] Thay cơ chế TTS im lặng bằng audio tiếng Hoa tệp thật hoặc trạng thái lỗi trung thực có hướng dẫn khắc phục.
+- [x] Thay mọi link kênh/playlist bằng link video cụ thể; ghi nguồn/kênh/video ID, URL nhúng và ngày kiểm chứng trong manifest.
+- [ ] Kiểm thử thao tác đọc, link video và desktop trước khi bàn giao.
+
+## Áp dụng đặc tả audio trên web app
+
+- [x] Rà soát lại các yêu cầu có thể áp dụng cho web app; loại trừ installer Windows, AppData, Tauri và ASR offline.
+- [x] Tạo audio Mandarin tệp thật cho năm thanh điệu tuần 1 và câu đọc `我是学生。`; kiểm tra asset theo manifest kỹ thuật.
+- [x] Thay TTS trình duyệt trong luồng từ vựng/đọc ưu tiên bằng tệp audio thực khi asset đã có; nội dung thiếu asset báo chờ sản xuất, không giả phát giọng mặc định.
+- [x] Tìm và kiểm chứng URL YouTube video cụ thể cho từng lesson, không dùng link kênh hoặc playlist.
+- [ ] Thêm kiểm tra manifest text–asset–URL, test luồng web và báo cáo rõ các media chưa có audio tệp.

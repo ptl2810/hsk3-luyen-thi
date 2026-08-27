@@ -30,15 +30,19 @@ Catalog `lessons` trong `client/src/data/courseData.ts` có đủ **144 lesson**
 
 ## Media phương án A
 
-Audio tệp là lựa chọn ưu tiên trong `AudioCoach`. Khi bài chưa có tệp, giao diện báo rõ trạng thái “đang chờ sản xuất” trước khi dùng `SpeechSynthesis` của trình duyệt làm fallback. `audioManifest` có 144 mục với transcript Hanzi, pinyin, dịch Việt và trạng thái/ghi chú quyền sử dụng. `videoManifest` có 24 mục, mỗi mục có kịch bản transcript, phụ đề văn bản, câu hỏi hiểu ngữ cảnh và trạng thái media.
+Audio tệp là học liệu ưu tiên. **Ứng dụng không còn dùng `SpeechSynthesis` của trình duyệt làm fallback** cho phần nghe/từ vựng: khi không có tệp, giao diện nói rõ audio đang chờ sản xuất thay vì thông báo đang đọc bằng giọng mặc định. `audioManifest` có 144 mục nghe với transcript Hanzi, pinyin, dịch Việt và trạng thái/ghi chú quyền sử dụng. `audioAssets` trong `client/src/data/mediaManifest.ts` mô tả riêng các clip tuần 1 có ID, Hán tự được nói, pinyin hiển thị, đường dẫn tệp, thời lượng, SHA-256, nguồn sinh giọng và trạng thái kiểm tra kỹ thuật.
+
+`videoManifest` có 24 mục, mỗi mục gắn một **URL YouTube video công khai đơn lẻ** với video ID, URL nhúng dạng `youtube-nocookie`, tiêu đề, kênh, ghi chú phù hợp và ngày kiểm chứng. Nút video ngoài luôn mở đúng clip được ghi ở tuần đang học, không mở kênh hay playlist. Danh mục đối chiếu nằm tại `docs/video-specific-research.md`.
 
 | Hạng mục | Số lượng | Tình trạng |
 |---|---:|---|
 | Lesson có thể mở | 144 | Đầy đủ dữ liệu cho bốn kỹ năng. |
-| Audio tệp thật | 5 | Tuần 1, 8, 12, 18 và 24; asset gốc tạo cho project. |
-| Audio chờ sản xuất | 139 | Có transcript và fallback `SpeechSynthesis` minh bạch. |
+| Audio nghe tệp thật | 5 | Một bài nghe đại diện ở tuần 1, 8, 12, 18 và 24; asset gốc tạo cho project. |
+| Clip Mandarin tuần 1 | 8 | Năm clip thanh điệu riêng `妈/麻/马/骂/吗`, hai từ vựng `你/好` và câu đọc `我是学生。`. |
+| Audio nghe chờ sản xuất | 139 | Có transcript; giao diện báo chờ sản xuất, không phát giọng mặc định. |
 | Video tệp thật | 1 | Tuần 8; clip mở tình huống dài 8 giây, có poster và WebVTT. |
 | Video chờ sản xuất | 23 | Có transcript, phụ đề văn bản, câu hỏi và ghi chú quyền trong manifest. |
+| Video nguồn cụ thể | 24 | Một video YouTube đơn lẻ theo mỗi chủ đề tuần, đã kiểm chứng metadata công khai ngày 2026-08-27. |
 
 Video tuần 8 có thể mở từ lesson tuần 8 ở cuối dashboard. Các video chờ không có placeholder giả: giao diện hiển thị đúng trạng thái, transcript và bài tập thay thế. Hạn mức tạo video hiện tại đã đạt giới hạn ngày sau khi tạo clip tuần 8, nên không có tuyên bố hoàn thành thêm video.
 
@@ -52,10 +56,11 @@ Tiến độ dùng schema version `2`. Trạng thái người học mới là **
 
 | Khu vực | Hiện có | Giới hạn |
 |---|---|---|
-| Nghe | Tệp audio ưu tiên, phát/tạm dừng/phát lại/tua, tốc độ, pinyin/dịch. | 139 bài đang chờ audio tệp; chất lượng giọng fallback phụ thuộc thiết bị. |
+| Nghe | Tệp audio ưu tiên, phát/tạm dừng/phát lại/tua, tốc độ, pinyin/dịch. | 139 bài đang chờ audio tệp; không có fallback giọng đọc mặc định. |
+| Từ vựng | Clip Mandarin riêng cho sáu từ tuần 1 và drill năm thanh, phát qua audio tệp. | Chưa có clip riêng cho từ vựng tuần 2–24; giao diện báo rõ là đang chờ sản xuất. |
 | Nói | Ghi âm cục bộ, nghe lại, nhận diện `zh-CN` khi trình duyệt hỗ trợ, tự nhập transcript. | “Mức khớp nội dung” chỉ so sánh transcript; không chấm thanh điệu, nhịp hay phát âm chuyên sâu. |
 | Viết | Canvas chuột/cảm ứng/bút, mẫu chữ, hoàn tác, xóa, lưu ảnh. | Chỉ là luyện và tự đối chiếu; không nhận diện hoặc chấm chữ viết tay. |
-| Video | Một video gốc có poster/WebVTT; 24 kịch bản có fallback văn bản. | Clip tuần 8 hiện ngắn hơn mục tiêu 30–60 giây; 23 video chưa được sản xuất. |
+| Video | Một video gốc có poster/WebVTT; 24 kịch bản có fallback văn bản và 24 link YouTube video cụ thể. | Clip tuần 8 hiện ngắn hơn mục tiêu 30–60 giây; 23 video nội bộ chưa được sản xuất. Khả năng xem/nhúng video bên ngoài vẫn phụ thuộc YouTube và thiết bị. |
 | Thi thử | Timer và cấu hình 10/40/80 câu theo mốc. | Nội dung là phiếu luyện do project biên soạn; không đại diện cho đề thi chính thức. |
 
 ## Cấu trúc mã nguồn chính
@@ -63,20 +68,23 @@ Tiến độ dùng schema version `2`. Trạng thái người học mới là **
 | Đường dẫn | Vai trò |
 |---|---|
 | `client/src/data/courseData.ts` | Catalog 144 lesson, audio manifest, video manifest, lookup lesson. |
+| `client/src/data/mediaManifest.ts` | Manifest clip Mandarin tuần 1 và resolver audio theo từ. |
 | `client/src/data/mockTests.ts` | Cấu hình mini test, đề bán phần và mô phỏng tuần 24. |
 | `client/src/lib/types.ts` | Schema lesson, câu hỏi, media và tiến độ v2. |
 | `client/src/lib/assessment.ts` | Chấm trắc nghiệm, so sánh transcript, tiến độ, lesson tiếp theo và danh sách ôn. |
 | `client/src/lib/storage.ts` | localStorage, migration v1→v2, IndexedDB và backup JSON. |
-| `client/src/components/AudioCoach.tsx` | Tệp audio ưu tiên với fallback minh bạch. |
+| `client/src/components/AudioCoach.tsx` | Trình phát audio tệp với trạng thái lỗi/chờ sản xuất trung thực. |
 | `client/src/components/LessonVideo.tsx` | Video, phụ đề, fallback transcript và trạng thái media. |
 | `client/src/components/SpeakingPractice.tsx` | Ghi âm, nhận diện tùy thiết bị và mức khớp nội dung. |
 | `client/src/components/WritingCanvas.tsx` | Canvas luyện và tự đối chiếu. |
 | `client/src/pages/Home.tsx` | Dashboard, lộ trình, các panel kỹ năng, ôn tập, cài đặt. |
-| `client/src/lib/assessment.test.ts` | 11 test cho logic, catalog, media manifest, mock test và backup. |
+| `client/src/lib/assessment.test.ts` | 13 test cho logic, catalog, manifest audio/video cụ thể, mock test và backup. |
 
 ## Kiểm thử
 
-Phiên bản này đã chạy `pnpm check`, `pnpm exec vitest run` (**11 test đạt**) và `pnpm build`. Các test kiểm tra đủ 144 lesson/24 tuần, trường nội dung bắt buộc, ID từ vựng duy nhất, đáp án nghe/đọc, manifest media, đề mô phỏng 80 câu/85 phút, tiến độ mới trống, sao lưu v2 và chọn lesson tiếp theo.
+Phiên bản này đã chạy `pnpm check`, `pnpm exec vitest run` (**13 test đạt**) và `pnpm build`. Các test kiểm tra đủ 144 lesson/24 tuần, trường nội dung bắt buộc, ID từ vựng duy nhất, đáp án nghe/đọc, asset audio tuần 1 với Hán tự–thời lượng–hash, ánh xạ chính xác thanh/câu đọc, 24 URL video đơn lẻ có video ID, đề mô phỏng 80 câu/85 phút, tiến độ mới trống, sao lưu v2 và chọn lesson tiếp theo.
+
+> Các clip Mandarin tuần 1 là **neural TTS đã kiểm tra kỹ thuật về tệp/thời lượng/hash**, chưa phải bản được người bản ngữ thẩm định. App không tuyên bố đã có kiểm duyệt phát âm bởi người bản ngữ.
 
 ## Triển khai GitHub Pages
 
