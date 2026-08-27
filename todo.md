@@ -16,3 +16,18 @@
 - [x] Thêm workflow GitHub Actions để build và xuất bản GitHub Pages khi đẩy nhánh `main`.
 - [x] Thêm cấu hình base path theo biến môi trường, kiểm tra build tương thích GitHub Pages.
 - [x] Cập nhật hướng dẫn chuyển mã nguồn, cấu hình Pages và quản lý asset media khi dùng GitHub.
+
+## Hướng dẫn người mới & phương án B
+
+- [ ] Xác định các bước triển khai GitHub Pages theo thứ tự phù hợp với người chưa dùng GitHub.
+- [ ] Soạn hướng dẫn chi tiết tạo repository, đưa mã nguồn lên GitHub, bật Pages và kiểm tra xuất bản.
+- [ ] Soạn lộ trình nâng lên phương án B, gồm sản xuất 139 audio tệp và 23 video còn chờ theo từng đợt.
+- [ ] Bàn giao tài liệu với danh sách kiểm tra, cách xử lý lỗi thường gặp và điểm cần người dùng xác nhận.
+
+## Xuất bản GitHub Pages có hỗ trợ thao tác
+
+- [x] Xác nhận repository đồng bộ `ptl2810/hsk3-luyen-thi` là đích xuất bản; repository `hoa-ngu-180-ngay` không được sử dụng.
+- [x] Xác nhận repository đồng bộ đã chuyển sang Public để đủ điều kiện GitHub Pages miễn phí.
+- [x] Kiểm tra cấu hình GitHub Pages và bật nguồn GitHub Actions trên repository đồng bộ.
+- [ ] Theo dõi workflow deploy đầu tiên và xác minh URL GitHub Pages.
+- [ ] Bàn giao URL Pages, quyền quản lý và lưu ý các asset media đang chờ chuyển.
