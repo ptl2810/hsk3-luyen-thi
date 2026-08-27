@@ -18,7 +18,7 @@
 
 ## Nội dung và điều hướng
 
-Catalog `lessons` trong `client/src/data/courseData.ts` có đủ **144 lesson**. Mỗi lesson có sáu từ vựng có ID riêng, một ghi chú ngữ pháp, hai câu hỏi nghe, một mục tiêu nói theo tình huống, một đoạn đọc kèm hai câu hỏi, ba đến năm chữ để luyện canvas và một nhiệm vụ viết câu. Các màn hình đều lấy dữ liệu từ lesson đang mở, không dùng câu hỏi cố định theo UI.
+Catalog `lessons` trong `client/src/data/courseData.ts` có đủ **144 lesson**. Mỗi lesson có sáu từ vựng có ID riêng, ghi chú ngữ pháp, script nghe theo chủ đề, ba biến thể nói, một đoạn đọc ba câu kèm **ba câu hỏi** (ý chính, từ/cụm từ và chi tiết), ba đến năm chữ để luyện canvas, nhiệm vụ sắp xếp câu và nhiệm vụ điền một chữ Hán. Các màn hình đều lấy dữ liệu từ lesson đang mở, không dùng câu hỏi cố định theo UI.
 
 | Thao tác của người học | Cách hoạt động |
 |---|---|
@@ -56,10 +56,11 @@ Tiến độ dùng schema version `2`. Trạng thái người học mới là **
 
 | Khu vực | Hiện có | Giới hạn |
 |---|---|---|
-| Nghe | Tệp audio ưu tiên, phát/tạm dừng/phát lại/tua, tốc độ, pinyin/dịch. | 139 bài đang chờ audio tệp; không có fallback giọng đọc mặc định. |
+| Nghe | Script 3 câu cho các lesson chờ audio và 2 câu hỏi hiểu nội dung; tệp audio ưu tiên khi có. | 139 bài đang chờ audio tệp; không có fallback giọng đọc mặc định. |
 | Từ vựng | Clip Mandarin riêng cho sáu từ tuần 1 và drill năm thanh, phát qua audio tệp. | Chưa có clip riêng cho từ vựng tuần 2–24; giao diện báo rõ là đang chờ sản xuất. |
-| Nói | Ghi âm cục bộ, nghe lại, nhận diện `zh-CN` khi trình duyệt hỗ trợ, tự nhập transcript. | “Mức khớp nội dung” chỉ so sánh transcript; không chấm thanh điệu, nhịp hay phát âm chuyên sâu. |
-| Viết | Canvas chuột/cảm ứng/bút với pointer capture an toàn, mẫu chữ, hoàn tác, xóa, lưu record và trạng thái rõ ràng. | Chỉ là luyện và tự đối chiếu; app không nhận diện hoặc chấm đúng/sai chữ viết tay. “Đạt bài viết” chỉ áp dụng cho nhiệm vụ câu có đáp án máy chấm được. |
+| Nói | Ba biến thể mẫu theo tình huống, ghi âm cục bộ, nghe lại, nhận diện `zh-CN` khi trình duyệt hỗ trợ, tự nhập transcript. | “Mức khớp nội dung” chỉ so sánh transcript; không chấm thanh điệu, nhịp hay phát âm chuyên sâu. |
+| Đọc | Đoạn 3 câu, pinyin/dịch bật tắt, gợi ý từ và 3 câu hỏi chấm cùng lúc; mỗi câu được lưu vào Ôn tập. | Đây là học liệu gốc theo chủ đề, không phải câu hỏi thi chính thức sao chép từ đề. |
+| Viết | Canvas chuột/cảm ứng/bút với pointer capture an toàn, mẫu chữ, hoàn tác, xóa, lưu record; sắp xếp câu và điền chữ. | Chỉ là luyện và tự đối chiếu; app không nhận diện/chấm chữ viết tay. “Đạt bài viết” chỉ áp dụng cho nhiệm vụ câu có đáp án máy chấm được. |
 | Video | Một video gốc có poster/WebVTT; 24 kịch bản có fallback văn bản và 24 link YouTube video cụ thể. | Clip tuần 8 hiện ngắn hơn mục tiêu 30–60 giây; 23 video nội bộ chưa được sản xuất. Khả năng xem/nhúng video bên ngoài vẫn phụ thuộc YouTube và thiết bị. |
 | Thi thử | Timer và cấu hình 10/40/80 câu theo mốc. | Nội dung là phiếu luyện do project biên soạn; không đại diện cho đề thi chính thức. |
 
@@ -84,7 +85,7 @@ Tiến độ dùng schema version `2`. Trạng thái người học mới là **
 
 ## Kiểm thử
 
-Phiên bản này đã chạy `pnpm check`, `pnpm exec vitest run` (**21 test đạt**) và `pnpm build`. Ngoài catalog/media/backup, test kiểm tra toạ độ Canvas khi CSS scale khác backing store, canvas/rect không sẵn sàng, chuỗi Pointer Events chuột/chạm/bút, `pointercancel`, `lostpointercapture`, lưu thành công/lỗi và quy tắc: lưu nét không tự hoàn thành kỹ năng Viết, chỉ câu đúng mới tạo điểm/hoàn thành.
+Phiên bản này đã chạy `pnpm check`, `pnpm exec vitest run` (**24 test đạt**) và `pnpm build`. Ngoài catalog/media/backup, test kiểm tra 144 đoạn Đọc riêng và nhiều câu, script Nghe nhiều câu khi audio tệp chưa có, bộ ba câu Đọc từ UI đến lưu kết quả, toạ độ Canvas khi CSS scale khác backing store, chuỗi Pointer Events chuột/chạm/bút, `pointercancel`, `lostpointercapture`, lưu thành công/lỗi và quy tắc: lưu nét không tự hoàn thành kỹ năng Viết, chỉ câu đúng mới tạo điểm/hoàn thành.
 
 > Các clip Mandarin tuần 1 là **neural TTS đã kiểm tra kỹ thuật về tệp/thời lượng/hash**, chưa phải bản được người bản ngữ thẩm định. App không tuyên bố đã có kiểm duyệt phát âm bởi người bản ngữ.
 

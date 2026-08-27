@@ -76,6 +76,7 @@ export interface SpeakingContent {
   translation: string;
   scenario: string;
   checkpoints: string[];
+  variations: Array<{ hanzi: string; pinyin: string; translation: string }>;
 }
 
 export interface ReadingContent {
@@ -89,6 +90,7 @@ export interface ReadingContent {
 export interface WritingContent {
   characters: Array<{ character: string; strokes?: number; hint: string }>;
   sentenceTask: { prompt: string; wordBank: string[]; answer: string; explanation: string };
+  fillBlankTask: { prompt: string; sentence: string; answer: string; explanation: string };
 }
 
 export interface LessonMedia {

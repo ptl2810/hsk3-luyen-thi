@@ -17,13 +17,24 @@ describe("catalog 24 tuần", () => {
     for (const lesson of lessons) {
       expect(getLessonById(lesson.id)).toEqual(lesson);
       expect(lesson.duration).toBe(60); expect(lesson.goal).not.toHaveLength(0); expect(lesson.vocabulary.length).toBeGreaterThanOrEqual(5); expect(lesson.vocabulary.length).toBeLessThanOrEqual(8);
-      expect(lesson.listening.transcript).not.toHaveLength(0); expect(lesson.listening.questions.length).toBeGreaterThanOrEqual(2); expect(lesson.speaking.target).not.toHaveLength(0);
-      expect(lesson.reading.passage).not.toHaveLength(0); expect(lesson.reading.questions.length).toBeGreaterThanOrEqual(2); expect(lesson.writing.characters.length).toBeGreaterThanOrEqual(3); expect(lesson.writing.characters.length).toBeLessThanOrEqual(5); expect(lesson.writing.sentenceTask.answer).not.toHaveLength(0);
+      const listeningTextLength = lesson.listening.transcript.replace(/[，。！？、：]/g, "").length; expect(listeningTextLength).toBeGreaterThanOrEqual(lesson.listening.audioSrc ? 4 : 12); expect(lesson.listening.questions.length).toBeGreaterThanOrEqual(2); expect(lesson.speaking.target).not.toHaveLength(0); expect(lesson.speaking.variations).toHaveLength(3);
+      expect(lesson.reading.passage.replace(/[，。！？、：]/g, "").length).toBeGreaterThanOrEqual(25); expect(lesson.reading.pinyin).not.toHaveLength(0); expect(lesson.reading.translation).not.toHaveLength(0); expect(lesson.reading.questions.length).toBeGreaterThanOrEqual(3); expect(lesson.writing.characters.length).toBeGreaterThanOrEqual(3); expect(lesson.writing.characters.length).toBeLessThanOrEqual(5); expect(lesson.writing.sentenceTask.answer).not.toHaveLength(0); expect(lesson.writing.fillBlankTask.answer).toHaveLength(1); expect(lesson.writing.fillBlankTask.sentence).toContain("（　）");
     }
   });
   it("có ID từ vựng duy nhất toàn khóa và đáp án nghe/đọc nhất quán với lựa chọn", () => {
     const wordIds = lessons.flatMap((lesson) => lesson.vocabulary.map((word) => word.id)); expect(new Set(wordIds).size).toBe(wordIds.length);
     for (const question of lessons.flatMap((lesson) => [...lesson.listening.questions, ...lesson.reading.questions])) expect(question.options.some((option) => option.id === question.answer)).toBe(true);
+  });
+  it("có 144 đoạn đọc riêng theo buổi và không lesson nào chỉ dùng bài đọc một câu", () => {
+    const passages = lessons.map((lesson) => lesson.reading.passage);
+    expect(new Set(passages).size).toBe(144);
+    for (const passage of passages) expect((passage.match(/[。！？]/g) ?? []).length).toBeGreaterThanOrEqual(3);
+  });
+  it("script Nghe chờ sản xuất vẫn có nhiều câu, còn audio đại diện giữ đúng transcript của tệp", () => {
+    const plannedScripts = lessons.filter((lesson) => !lesson.listening.audioSrc).map((lesson) => lesson.listening.transcript);
+    expect(new Set(plannedScripts).size).toBe(plannedScripts.length);
+    for (const script of plannedScripts) expect((script.match(/[。！？]/g) ?? []).length).toBeGreaterThanOrEqual(3);
+    expect(lessons.filter((lesson) => lesson.listening.audioSrc)).toHaveLength(5);
   });
   it("có manifest audio theo 144 lesson, video nội bộ khi có và 24 nguồn YouTube là video cụ thể", () => { expect(audioManifest).toHaveLength(144); expect(videoManifest).toHaveLength(24); expect(audioManifest.some((audio) => audio.status === "available")).toBe(true); expect(videoManifest.some((video) => video.status === "available" && video.videoSrc && video.captionsSrc)).toBe(true); const sources = videoManifest.map((video) => video.externalSource); expect(sources.every((source) => source?.provider === "youtube" && source.specificity === "specific-video" && /^https:\/\/www\.youtube\.com\/watch\?v=[A-Za-z0-9_-]{11}$/.test(source.sourceUrl) && /^https:\/\/www\.youtube-nocookie\.com\/embed\/[A-Za-z0-9_-]{11}\?rel=0&playsinline=1$/.test(source.embedUrl) && source.sourceUrl.endsWith(source.videoId) && source.channel && source.sourceTitle && source.checkedAt)).toBe(true); expect(new Set(sources.map((source) => source?.videoId)).size).toBe(24); });
   it("audio Mandarin tuần 1 luôn tham chiếu tệp riêng có Hán tự thuần, hash và thời lượng", () => {

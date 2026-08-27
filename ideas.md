@@ -73,3 +73,6 @@ Logo là dấu **180** được tạo từ một nét bút liên tục: vòng đ
 - Hình ảnh học tập luôn được xử lý như một phần tài liệu: có watermark chữ Hán, dấu khoanh/gạch đỏ hoặc nhãn bài đi kèm, không chỉ làm nền trang trí.
 - Khu bốn kỹ năng trên desktop dùng một chuỗi phiếu chồng lệch, có đường lề dọc và chỉ dấu số thứ tự; mỗi tiêu đề có gạch sửa đỏ để thể hiện hành vi của gia sư.
 - Liên kết video ngoài được thể hiện bằng phiếu nguồn riêng: nền đỏ nhạt, ghi rõ kênh, trạng thái kiểm chứng và luôn mở ở tab mới để người học không nhầm với video nội bộ.
+- Dải nhiệm vụ hôm nay luôn nêu rõ tuần, buổi, kỹ năng và thao tác kế tiếp của lesson đang mở; không dùng lời chào tiến độ chung lặp lại giữa các bài.
+- Mỗi khối học chính có một dấu hiệu biên tập cố định — số mục, nhãn lề, đường kẻ giấy hoặc dấu bút đỏ — để tránh trở thành card trắng đồng đều.
+- Đỏ Son Gia Sư chỉ biểu đạt hành vi gia sư: khoanh phần cần làm, gạch điểm chú ý, đóng dấu trạng thái, chỉ lỗi hoặc là hành động chính; không dùng như màu trang trí trung tính.

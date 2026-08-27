@@ -71,3 +71,11 @@
 - [x] Lưu record luyện nét có lesson, chữ mẫu, số nét, thời điểm và trạng thái sau transaction IndexedDB; phản ánh chính xác trên tiến độ.
 - [x] Tách lưu luyện nét khỏi chấm câu: chỉ hoàn thành kỹ năng Viết khi nhiệm vụ câu có đáp án được chấm đúng.
 - [x] Thêm test helper Canvas, chuỗi pointer, lưu luyện nét, câu đúng/sai, sau đó kiểm tra hồi quy toàn bộ app trên desktop và mobile.
+
+## Hoàn thiện nội dung luyện HSK3 sau MVP
+
+- [x] Đối chiếu đề cương HSK3 và lập ma trận nội dung 24 tuần × 6 buổi, nêu rõ độ dài đọc/nghe, dạng câu hỏi và mục tiêu mỗi giai đoạn.
+- [x] Thay các đoạn Đọc một câu bằng đoạn nhiều câu có ngữ cảnh, pinyin/dịch Việt theo nhu cầu và hai đến bốn câu hỏi từ ý chính đến chi tiết.
+- [x] Mở rộng script Nghe, kịch bản Nói và nhiệm vụ Viết theo chủ đề tuần; giữ nội dung dữ liệu hóa, không đặt cứng trong giao diện.
+- [x] Nâng schema/UI để hiển thị đoạn đầy đặn, danh sách câu hỏi và phản hồi phù hợp với bài tập đã mở rộng.
+- [x] Thêm validator/test về độ dài nội dung, độ đa dạng câu hỏi, tính nhất quán đáp án và kiểm thử hồi quy 144 lesson.

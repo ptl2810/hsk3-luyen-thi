@@ -1,6 +1,6 @@
 /**
  * Mực Đỏ Thực Hành: Catalog HSK3 v2 — 24 tuần × 6 buổi, toàn bộ panel lấy từ dữ liệu này.
- * Media có trạng thái rõ ràng: tệp thật được ưu tiên, bài chưa có tệp dùng fallback được thông báo.
+ * Media có trạng thái rõ ràng: tệp thật được ưu tiên, bài chưa có tệp hiển thị trạng thái chờ sản xuất.
  */
 import { getVocabularyAudioAssetId } from "@/data/mediaManifest";
 import type { ChoiceQuestion, Lesson, VideoContext, VocabularyWord } from "@/lib/types";
@@ -208,6 +208,44 @@ const sessionTemplates = [
   { prefix: "Tích hợp & kiểm tra", goal: "Kết hợp nghe, nói, đọc, viết trong một kiểm tra ngắn theo chủ đề." },
 ] as const;
 
+/** Mỗi chủ đề có sáu lượt đọc khác nhau: đoạn gốc + câu mục tiêu + một kết luận tình huống. */
+const readingClosers = [
+  { hanzi: "安把今天的事情记在本子上，明天再看一遍。", pinyin: "Ān bǎ jīntiān de shìqing jì zài běnzi shàng, míngtiān zài kàn yí biàn.", translation: "An ghi việc hôm nay vào sổ, ngày mai sẽ xem lại một lần." },
+  { hanzi: "她想把时间和重要的信息记清楚，免得忘记。", pinyin: "Tā xiǎng bǎ shíjiān hé zhòngyào de xìnxī jì qīngchu, miǎnde wàngjì.", translation: "Cô ấy muốn ghi rõ thời gian và thông tin quan trọng để khỏi quên." },
+  { hanzi: "后来，她把这个消息告诉了朋友，朋友也明白了。", pinyin: "Hòulái, tā bǎ zhège xiāoxi gàosu le péngyou, péngyou yě míngbai le.", translation: "Sau đó, cô ấy nói tin này cho bạn; người bạn cũng hiểu." },
+  { hanzi: "读完以后，安又问了一个问题，大家一起想办法。", pinyin: "Dú wán yǐhòu, Ān yòu wèn le yí ge wèntí, dàjiā yìqǐ xiǎng bànfǎ.", translation: "Đọc xong, An lại hỏi một câu; mọi người cùng nghĩ cách." },
+  { hanzi: "她觉得这个安排很好，所以准备照着做。", pinyin: "Tā juéde zhège ānpái hěn hǎo, suǒyǐ zhǔnbèi zhào zhe zuò.", translation: "Cô ấy thấy cách sắp xếp này rất tốt nên chuẩn bị làm theo." },
+  { hanzi: "最后，安检查了细节，确定自己没有听错也没有看错。", pinyin: "Zuìhòu, Ān jiǎnchá le xìjié, quèdìng zìjǐ méiyǒu tīng cuò yě méiyǒu kàn cuò.", translation: "Cuối cùng, An kiểm tra chi tiết để chắc rằng mình không nghe sai hay đọc sai." },
+] as const;
+
+const listeningClosers = [
+  { hanzi: "请先听清楚重点信息，再选择答案。", pinyin: "Qǐng xiān tīng qīngchu zhòngdiǎn xìnxī, zài xuǎnzé dá'àn.", translation: "Hãy nghe rõ thông tin chính trước, rồi chọn đáp án." },
+  { hanzi: "他们把时间说得很清楚，你可以再听一遍。", pinyin: "Tāmen bǎ shíjiān shuō de hěn qīngchu, nǐ kěyǐ zài tīng yí biàn.", translation: "Họ nói thời gian rất rõ; bạn có thể nghe lại một lượt." },
+  { hanzi: "听到关键词以后，先想一想说话人的意思。", pinyin: "Tīngdào guānjiàncí yǐhòu, xiān xiǎng yì xiǎng shuōhuàrén de yìsi.", translation: "Sau khi nghe từ khóa, hãy nghĩ về ý của người nói." },
+  { hanzi: "这是一段短对话，注意谁在说什么。", pinyin: "Zhè shì yí duàn duǎn duìhuà, zhùyì shéi zài shuō shénme.", translation: "Đây là hội thoại ngắn; hãy chú ý ai nói điều gì." },
+  { hanzi: "如果没有听清，可以按自己的节奏再听。", pinyin: "Rúguǒ méiyǒu tīng qīng, kěyǐ àn zìjǐ de jiézòu zài tīng.", translation: "Nếu chưa nghe rõ, bạn có thể nghe lại theo nhịp của mình." },
+  { hanzi: "最后，确认细节，不要只听到一个词。", pinyin: "Zuìhòu, quèrèn xìjié, bú yào zhǐ tīngdào yí ge cí.", translation: "Cuối cùng, hãy xác nhận chi tiết, đừng chỉ nghe một từ." },
+] as const;
+
+function makeListeningContent(seed: TopicSeed, session: number) {
+  const closer = listeningClosers[session - 1];
+  const [firstWord, secondWord] = seed.vocabulary;
+  return {
+    hanzi: `${seed.target.hanzi}这段话提到了${firstWord[0]}和${secondWord[0]}。${closer.hanzi}`,
+    pinyin: `${seed.target.pinyin} Zhè duàn huà tí dào le ${firstWord[1]} hé ${secondWord[1]}. ${closer.pinyin}`,
+    translation: `${seed.target.translation} Đoạn nói nhắc đến ${firstWord[2]} và ${secondWord[2]}. ${closer.translation}`,
+  };
+}
+
+function makeReadingContent(seed: TopicSeed, session: number) {
+  const closer = readingClosers[session - 1];
+  return {
+    hanzi: `${seed.reading.hanzi}${seed.target.hanzi}${closer.hanzi}`,
+    pinyin: `${seed.reading.pinyin} ${seed.target.pinyin} ${closer.pinyin}`,
+    translation: `${seed.reading.translation} ${seed.target.translation} ${closer.translation}`,
+  };
+}
+
 const representativeAudio: Record<string, { src: string; hanzi: string; pinyin: string; translation: string }> = {
   "w01-s01": { src: "/manus-storage/hsk3-tones-week1_7582e15a.wav", hanzi: "妈，麻，马，骂。", pinyin: "Mā, má, mǎ, mà.", translation: "mẹ, cây gai, ngựa, mắng." },
   "w08-s02": { src: "/manus-storage/hsk3-week08-shopping_d397116d.wav", hanzi: "服务员：您好，这件红衣服一百块。安：有一点贵。请问，这件衣服多少钱？服务员：一百块。", pinyin: "Fúwùyuán: Nín hǎo, zhè jiàn hóng yīfu yì bǎi kuài. Ān: Yǒu yìdiǎn guì. Qǐngwèn, zhè jiàn yīfu duōshao qián? Fúwùyuán: Yì bǎi kuài.", translation: "Nhân viên: Chào bạn, chiếc áo đỏ này một trăm tệ. An: Hơi đắt. Xin hỏi chiếc áo này bao nhiêu tiền? Nhân viên: Một trăm tệ." },
@@ -258,6 +296,8 @@ function makeLesson(seed: TopicSeed, week: number, session: number): Lesson {
     { hanzi: `请复习：${seed.target.hanzi}`, pinyin: `Qǐng fùxí: ${seed.target.pinyin}`, translation: `Hãy ôn lại: ${seed.target.translation}` },
   ];
   const lessonSentence = lessonSentences[session - 1];
+  const readingContent = makeReadingContent(seed, session);
+  const listeningContent = makeListeningContent(seed, session);
   const grammarBySession = [
     { title: `Từ khóa: ${seed.grammar.title}`, formula: `Từ trọng tâm → ${seed.grammar.formula}`, explanation: `Nhìn vào các từ trọng tâm trước khi áp dụng cấu trúc. ${seed.grammar.explanation}` },
     { title: `Nghe nhịp câu: ${seed.grammar.title}`, formula: `Nghe → ngắt nhịp → ${seed.grammar.formula}`, explanation: `Nghe câu theo từng nhịp ngắn để nhận ra cấu trúc. ${seed.grammar.explanation}` },
@@ -267,12 +307,17 @@ function makeLesson(seed: TopicSeed, week: number, session: number): Lesson {
     { title: `Tự kiểm: ${seed.grammar.title}`, formula: `Tự kiểm → ${seed.grammar.formula}`, explanation: `Đối chiếu lại mẫu câu sau khi làm bài tích hợp. ${seed.grammar.explanation}` },
   ][session - 1];
   const sentenceTask = { prompt: `${sessionTemplate.prefix}: sắp xếp thành câu theo chủ đề “${seed.shortTitle}”.`, wordBank: lessonSentence.hanzi.replace(/[，。！？、：]/g, "").match(/.{1}/g) ?? [], answer: lessonSentence.hanzi.replace(/[，。！？、：]/g, ""), explanation: `Câu mẫu đúng là: ${lessonSentence.hanzi}` };
+  const sentenceAnswer = sentenceTask.answer;
+  const blankIndex = Math.min(Math.max(session - 1, 0), Math.max(sentenceAnswer.length - 1, 0));
+  const missingCharacter = sentenceAnswer[blankIndex] ?? sentenceAnswer[0];
+  const fillBlankTask = { prompt: "Điền một chữ Hán còn thiếu để hoàn chỉnh câu mẫu.", sentence: `${sentenceAnswer.slice(0, blankIndex)}（　）${sentenceAnswer.slice(blankIndex + 1)}`, answer: missingCharacter, explanation: `Chữ còn thiếu là “${missingCharacter}”, dựa trên câu mẫu: ${lessonSentence.hanzi}` };
   const fileAudio = representativeAudio[id];
-  const audioScript = fileAudio ?? lessonSentence;
+  const audioScript = fileAudio ?? listeningContent;
   const questionOne = makeChoice(`${id}-l1`, ["Ý chính câu nghe là gì?", "Người nói đang yêu cầu điều gì?", "Câu nào khớp với audio?", "Thông tin nào có trong audio?", "Câu nghe mô tả điều gì?", "Sau khi nghe, hãy chọn ý đúng."][session - 1], audioScript.translation, ["Đang hỏi giá tiền.", "Đang hỏi đường."], `Đáp án dựa trực tiếp vào câu nghe: ${audioScript.hanzi}`);
   const questionTwo = makeChoice(`${id}-l2`, ["Từ/cụm nào xuất hiện trong câu nghe?", "Từ trọng tâm nào bạn nghe được?", "Câu nghe có nhắc đến từ nào?", "Hãy chọn từ thuộc câu nghe.", "Từ nào nên được nhấn khi nghe?", "Từ nào xuất hiện khi ôn lại audio?"][session - 1], seed.vocabulary[0][0], [seed.vocabulary[2][0], seed.vocabulary[4][0]], `Câu nghe có từ ${seed.vocabulary[0][0]} (${seed.vocabulary[0][1]}).`);
-  const readingQuestionOne = makeChoice(`${id}-r1`, ["Đoạn đọc chủ yếu nói về điều gì?", "Người trong đoạn đang làm gì?", "Thông tin chính của đoạn là gì?", "Chi tiết nào đúng theo đoạn?", "Đoạn cho biết điều gì?", "Hãy chọn tóm tắt phù hợp nhất."][session - 1], seed.reading.translation, ["Một hoạt động không liên quan.", "Một câu chuyện ở chủ đề khác."], `Hãy đối chiếu ý chính của đoạn: ${seed.reading.hanzi}`);
+  const readingQuestionOne = makeChoice(`${id}-r1`, ["Đoạn đọc chủ yếu nói về điều gì?", "Người trong đoạn đang làm gì?", "Thông tin chính của đoạn là gì?", "Chi tiết nào đúng theo đoạn?", "Đoạn cho biết điều gì?", "Hãy chọn tóm tắt phù hợp nhất."][session - 1], seed.reading.translation, ["Một hoạt động không liên quan.", "Một câu chuyện ở chủ đề khác."], `Hãy đối chiếu phần mở đầu của đoạn: ${seed.reading.hanzi}`);
   const readingQuestionTwo = makeChoice(`${id}-r2`, ["Từ nào trong đoạn thuộc chủ đề bài học?", "Từ trọng tâm nào giúp hiểu đoạn?", "Từ nào bạn có thể tìm thấy trong ngữ cảnh?", "Chi tiết từ vựng nào đúng?", "Từ nào nên đánh dấu để ôn?", "Từ nào khớp với chủ đề tuần?"][session - 1], seed.vocabulary[1][0], [seed.vocabulary[3][0], seed.vocabulary[5][0]], `Từ ${seed.vocabulary[1][0]} nằm trong nhóm từ trọng tâm của tuần.`);
+  const readingQuestionThree = makeChoice(`${id}-r3`, ["Sau khi đọc xong, An làm gì?", "An muốn ghi rõ điều gì?", "An kể tin này cho ai?", "Sau khi đọc, mọi người làm gì?", "An dự định làm gì tiếp?", "Cuối đoạn, An kiểm tra điều gì?"][session - 1], ["Ghi việc vào sổ để xem lại.", "Thời gian và thông tin quan trọng.", "Một người bạn.", "Cùng nghĩ cách.", "Chuẩn bị làm theo cách sắp xếp.", "Chi tiết để không nghe hoặc đọc sai."][session - 1], ["Rời khỏi lớp ngay.", "Không làm gì thêm."], `Câu kết nêu rõ bước tiếp theo sau khi đọc: ${readingClosers[session - 1].hanzi}`);
   const characters = seed.characters.slice(0, 5).map((character) => ({ character, strokes: knownStrokes[character], hint: characterHints[character] ?? "Quan sát bố cục, viết từng phần từ trên xuống và trái sang phải." }));
 
   return {
@@ -283,9 +328,9 @@ function makeLesson(seed: TopicSeed, week: number, session: number): Lesson {
     grammar: { title: grammarBySession.title, formula: grammarBySession.formula, explanation: grammarBySession.explanation, positiveExample: "positiveExample" in grammarBySession ? grammarBySession.positiveExample : seed.grammar.positiveExample, commonMistake: "commonMistake" in grammarBySession ? grammarBySession.commonMistake : seed.grammar.commonMistake },
     vocabulary,
     listening: { audioSrc: fileAudio?.src ?? null, transcript: audioScript.hanzi, pinyin: audioScript.pinyin, translation: audioScript.translation, questions: [questionOne, questionTwo] },
-    speaking: { target: lessonSentence.hanzi, pinyin: lessonSentence.pinyin, translation: lessonSentence.translation, scenario: `Buổi ${session}: ${seed.videoTitle.toLowerCase()}. Hãy nói câu mẫu chậm, rõ và theo đúng ngữ cảnh.`, checkpoints: ["Nghe câu mẫu một lượt.", "Ghi âm hoặc tự nhập transcript.", "Đối chiếu những từ còn thiếu/dư."] },
-    reading: { passage: seed.reading.hanzi, pinyin: seed.reading.pinyin, translation: seed.reading.translation, hints: seed.vocabulary.slice(0, 3).map(([hanzi, pinyin, meaning]) => ({ hanzi, pinyin, meaning })), questions: [readingQuestionOne, readingQuestionTwo] },
-    writing: { characters, sentenceTask }, writingCharacters: characters,
+    speaking: { target: lessonSentence.hanzi, pinyin: lessonSentence.pinyin, translation: lessonSentence.translation, scenario: `Buổi ${session}: ${seed.videoTitle.toLowerCase()}. Hãy nói câu mẫu chậm, rõ và theo đúng ngữ cảnh.`, checkpoints: ["Nghe câu mẫu một lượt.", "Chọn một biến thể và nói lại theo ngữ cảnh.", "Ghi âm hoặc tự nhập transcript để đối chiếu những từ còn thiếu/dư."], variations: [seed.target, { hanzi: `我想练习：${seed.target.hanzi}`, pinyin: `Wǒ xiǎng liànxí: ${seed.target.pinyin}`, translation: `Tôi muốn luyện: ${seed.target.translation}` }, { hanzi: `请你再说一遍：${seed.target.hanzi}`, pinyin: `Qǐng nǐ zài shuō yí biàn: ${seed.target.pinyin}`, translation: `Bạn hãy nói lại một lượt: ${seed.target.translation}` }] },
+    reading: { passage: readingContent.hanzi, pinyin: readingContent.pinyin, translation: readingContent.translation, hints: seed.vocabulary.slice(0, 4).map(([hanzi, pinyin, meaning]) => ({ hanzi, pinyin, meaning })), questions: [readingQuestionOne, readingQuestionTwo, readingQuestionThree] },
+    writing: { characters, sentenceTask, fillBlankTask }, writingCharacters: characters,
     media: { audioId: `audio-${id}`, videoId: `week-${String(week).padStart(2, "0")}`, posterSrc: week === 8 ? "/manus-storage/week08-shopping-poster_0973a7ef.jpg" : null, videoSrc: week === 8 ? "/manus-storage/week08-shopping-scene-1_2d65c2bf.mp4" : null, captionsSrc: week === 8 ? "/manus-storage/week08-shopping_b5eb9f94.vtt" : null },
   };
 }
