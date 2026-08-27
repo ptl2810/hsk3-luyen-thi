@@ -9,3 +9,10 @@
 - [x] Chuyển trạng thái người dùng mới thành tiến độ trống, cập nhật tiếp tục học và điểm/thống kê theo dữ liệu thực.
 - [x] Thêm test lookup đủ 144 bài, tính bắt buộc của dữ liệu, đáp án, lesson tiếp theo, backup và trạng thái tiến độ.
 - [x] Kiểm tra dashboard desktop/mobile, type check, test, build và bàn giao báo cáo media minh bạch.
+
+## Chuẩn bị GitHub Pages
+
+- [x] Rà soát đường dẫn asset và cấu hình Vite khi triển khai ngoài môi trường hiện tại.
+- [x] Thêm workflow GitHub Actions để build và xuất bản GitHub Pages khi đẩy nhánh `main`.
+- [x] Thêm cấu hình base path theo biến môi trường, kiểm tra build tương thích GitHub Pages.
+- [x] Cập nhật hướng dẫn chuyển mã nguồn, cấu hình Pages và quản lý asset media khi dùng GitHub.

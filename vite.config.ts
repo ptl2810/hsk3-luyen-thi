@@ -205,7 +205,13 @@ function vitePluginStorageProxy(): Plugin {
 
 const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
 
+// GitHub Pages: base path tự tạo từ tên repository khi build trong GitHub Actions.
+// Local/Manus preview vẫn dùng root "/" để không đổi URL hiện có.
+const repositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1];
+const githubPagesBase = process.env.GITHUB_ACTIONS === "true" && repositoryName ? `/${repositoryName}/` : "/";
+
 export default defineConfig({
+  base: githubPagesBase,
   plugins,
   resolve: {
     alias: {

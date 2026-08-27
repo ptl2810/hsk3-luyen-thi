@@ -78,6 +78,10 @@ Tiến độ dùng schema version `2`. Trạng thái người học mới là **
 
 Phiên bản này đã chạy `pnpm check`, `pnpm exec vitest run` (**11 test đạt**) và `pnpm build`. Các test kiểm tra đủ 144 lesson/24 tuần, trường nội dung bắt buộc, ID từ vựng duy nhất, đáp án nghe/đọc, manifest media, đề mô phỏng 80 câu/85 phút, tiến độ mới trống, sao lưu v2 và chọn lesson tiếp theo.
 
+## Triển khai GitHub Pages
+
+Repository đã có workflow `.github/workflows/deploy-pages.yml`. Sau khi đưa mã lên một repository GitHub, vào **Settings → Pages → Build and deployment**, chọn **GitHub Actions**. Mỗi lần đẩy nhánh `main`, workflow sẽ build `dist/public` với base path theo tên repository rồi triển khai Pages. Chi tiết cách chuyển media ra khỏi môi trường preview nằm tại `docs/github-pages-media.md`.
+
 ## Tham khảo
 
 [1]: https://m.chinesetest.cn/HSK/3 "HSK (Level 3) — Chinese Tests Service Website"
